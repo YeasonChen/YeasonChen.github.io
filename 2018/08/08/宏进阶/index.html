@@ -6,21 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="测试外链图片">
+    <meta name="description" content="C语言中的宏有两种,一种是对象宏 另一种是 函数宏 对象宏对象宏通常用于定义一个常量,通过宏就可以拿到这个常量. 12// 定义了一个PI常量,后续需要使用时直接使用PI即可#define PI 3.1415926 注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级 1234#define MARGIN 10 + 20MARGIN * 2此时会被替换成: 10 + 20 * 2 显然这不是">
 <meta name="keywords" content="计算机基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="宏进阶">
 <meta property="og:url" content="http://yoursite.com/2018/08/08/宏进阶/index.html">
 <meta property="og:site_name" content="Yeason&#39;s blog">
-<meta property="og:description" content="测试外链图片">
+<meta property="og:description" content="C语言中的宏有两种,一种是对象宏 另一种是 函数宏 对象宏对象宏通常用于定义一个常量,通过宏就可以拿到这个常量. 12// 定义了一个PI常量,后续需要使用时直接使用PI即可#define PI 3.1415926 注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级 1234#define MARGIN 10 + 20MARGIN * 2此时会被替换成: 10 + 20 * 2 显然这不是">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2090609-4b1b80dcd3655bc5.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/macro_image/logo.png?Expires=1533717561&OSSAccessKeyId=TMP.AQHohEjteoKdJ9zsdZmwa3Usd5UX0w6O-sA01M4V_wPRyfIasJ3EAePof-D_ADAtAhRPS15exeq6rEbvCiJzCssCgwEccwIVAKdxY-c1WBnYOyPdxsc3aDDi6boI&Signature=yNwKEDVkWCZJOUmkJ5EJjk7%2ByGI%3D">
-<meta property="og:updated_time" content="2018-08-08T07:41:01.303Z">
+<meta property="og:updated_time" content="2018-08-08T10:04:12.052Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="宏进阶">
-<meta name="twitter:description" content="测试外链图片">
-<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2090609-4b1b80dcd3655bc5.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:description" content="C语言中的宏有两种,一种是对象宏 另一种是 函数宏 对象宏对象宏通常用于定义一个常量,通过宏就可以拿到这个常量. 12// 定义了一个PI常量,后续需要使用时直接使用PI即可#define PI 3.1415926 注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级 1234#define MARGIN 10 + 20MARGIN * 2此时会被替换成: 10 + 20 * 2 显然这不是">
     
     
         
@@ -98,7 +95,7 @@
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#对象宏"><span class="toc-number">1.</span> <span class="toc-text">对象宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数宏"><span class="toc-number">2.</span> <span class="toc-text">函数宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#宏定义中特殊的用法"><span class="toc-number">3.</span> <span class="toc-text">宏定义中特殊的用法</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -137,9 +134,39 @@
   
 
   <div class="content" itemprop="articleBody">
-    <p> 测试外链图片</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/2090609-4b1b80dcd3655bc5.JPG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></p>
-<p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/macro_image/logo.png?Expires=1533717561&amp;OSSAccessKeyId=TMP.AQHohEjteoKdJ9zsdZmwa3Usd5UX0w6O-sA01M4V_wPRyfIasJ3EAePof-D_ADAtAhRPS15exeq6rEbvCiJzCssCgwEccwIVAKdxY-c1WBnYOyPdxsc3aDDi6boI&amp;Signature=yNwKEDVkWCZJOUmkJ5EJjk7%2ByGI%3D" alt="宏定义图片"></p>
+    <p>C语言中的宏有两种,一种是<code>对象宏</code> 另一种是 <code>函数宏</code></p>
+<h4 id="对象宏"><a href="#对象宏" class="headerlink" title="对象宏"></a>对象宏</h4><p><code>对象宏</code>通常用于定义一个常量,通过宏就可以拿到这个常量.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义了一个PI常量,后续需要使用时直接使用PI即可</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PI 3.1415926</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MARGIN 10 + 20</span></span><br><span class="line">MARGIN * <span class="number">2</span></span><br><span class="line"></span><br><span class="line">此时会被替换成: <span class="number">10</span> + <span class="number">20</span> * <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>显然这不是我们想要的结果,因此需要在宏定义宏添加括号保证执行顺序,需要改为:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MARGIN (10 + 20)</span></span><br></pre></td></tr></table></figure>
+<h4 id="函数宏"><a href="#函数宏" class="headerlink" title="函数宏"></a>函数宏</h4><p><code>函数宏</code>类似于一个函数,它可以传递参数,通过参数进行一系列的操作.在宏定义的后面加上括号,并在其中加入参数,编译器就会展开并按进行替换.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MARGIN(A, B) (A + B)</span></span><br></pre></td></tr></table></figure>
+<h4 id="宏定义中特殊的用法"><a href="#宏定义中特殊的用法" class="headerlink" title="宏定义中特殊的用法"></a>宏定义中特殊的用法</h4><ol>
+<li><p><code>#</code></p>
+<p>将宏定义中的传入参数名转换成用一对双引号括起来参数名字符串.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> string(name) printf(<span class="meta-string">"%s"</span>, #name);</span></span><br><span class="line"><span class="built_in">string</span>(abc);</span><br><span class="line"></span><br><span class="line">会转换成: <span class="string">"abc"</span></span><br></pre></td></tr></table></figure>
+<p>注意:</p>
+<p>​    a. 传入的参数前后空格将会被忽略.</p>
+<p>​        如: <code>string(   abc  );</code> 将会被展开为: <code>&quot;abc&quot;;</code></p>
+<p>​    b. 传入的参数内部有多个空格,会被合并为一个空格.</p>
+<p>​        如: <code>string(abc     def);</code> 将会被展开为: <code>&quot;abc edf&quot;;</code></p>
+</li>
+<li><p><code>##</code></p>
+<p>合并传入的参数.(常用于合并成实际参数名)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RealName(n) Name##n</span></span><br><span class="line">RealName(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">会转换成: Name3</span><br></pre></td></tr></table></figure>
+<p>注意:</p>
+<p>​    a. 用<code>##</code>连接形参时,<code>##</code>前后的空格可有可无.</p>
+<p>​    如: <code>#define RealName(n) Name##n</code>与<code>#define RealName(n) Name ## n</code>没有区别.</p>
+<p>   b. 如果<code>##</code>用在<code>,</code>和参数之间,且参数留空的话,<code>,</code>会删除掉,防止编译错误.</p>
+<p>   c. <strong>如果用到<code>#</code> 或<code>##</code>的宏,其参数也是宏的话,参数宏不会被展开.</strong></p>
+</li>
+<li><p><code>__VA_ARGS_</code></p>
+<p>多参数宏,与<code>...</code>配合使用.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 可传入多个参数,如果没有参数 ## 会被最后的&apos;,&apos;去掉</span><br><span class="line">#define MYLog(fmt, ...) NSLog((fmt), ##__VA_ARGS__);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 
   </div>
 </article>
@@ -164,7 +191,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#对象宏"><span class="toc-number">1.</span> <span class="toc-text">对象宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数宏"><span class="toc-number">2.</span> <span class="toc-text">函数宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#宏定义中特殊的用法"><span class="toc-number">3.</span> <span class="toc-text">宏定义中特殊的用法</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
