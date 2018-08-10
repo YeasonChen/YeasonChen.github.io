@@ -6,15 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="keywords" content="音视频">
+    <meta name="description" content="声音的采集：1.采集频率： （人耳的范围是20Hz~20kHz），采样率需要是最大值的两倍，所以一般定为44.1kHz，表示每秒采集44100次。 2.量化： 可以用16比特来模拟音频，所以幅度分为65536层。 3.编码：采集好的数据为裸数据（PCM），则双声道，每秒需要的比特数为： 44100  16  2  = 1378.125kbps  每分钟则约为10M 上述是一个基本的采集，也可以使用">
+<meta name="keywords" content="音视频">
 <meta property="og:type" content="article">
 <meta property="og:title" content="音视频基础-基础概念">
 <meta property="og:url" content="http://yoursite.com/2018/08/10/音视频基础-基础概念/index.html">
 <meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="声音的采集：1.采集频率： （人耳的范围是20Hz~20kHz），采样率需要是最大值的两倍，所以一般定为44.1kHz，表示每秒采集44100次。 2.量化： 可以用16比特来模拟音频，所以幅度分为65536层。 3.编码：采集好的数据为裸数据（PCM），则双声道，每秒需要的比特数为： 44100  16  2  = 1378.125kbps  每分钟则约为10M 上述是一个基本的采集，也可以使用">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-10T04:18:50.771Z">
+<meta property="og:updated_time" content="2018-08-10T06:09:28.767Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="音视频基础-基础概念">
+<meta name="twitter:description" content="声音的采集：1.采集频率： （人耳的范围是20Hz~20kHz），采样率需要是最大值的两倍，所以一般定为44.1kHz，表示每秒采集44100次。 2.量化： 可以用16比特来模拟音频，所以幅度分为65536层。 3.编码：采集好的数据为裸数据（PCM），则双声道，每秒需要的比特数为： 44100  16  2  = 1378.125kbps  每分钟则约为10M 上述是一个基本的采集，也可以使用">
     
     
         
@@ -64,8 +67,10 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" href="/2018/08/10/FFmpeg-01-概述与命令行使用/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        <li><a class="icon" href="/2018/08/08/宏进阶/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="/2016/08/08/宏进阶/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -92,7 +97,7 @@
 
     </div>
     <div id="toc">
-      
+      <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#声音的采集："><span class="toc-number">1.</span> <span class="toc-text">声音的采集：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#音频编码："><span class="toc-number">2.</span> <span class="toc-text">音频编码：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视频"><span class="toc-number"></span> <span class="toc-text">视频</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#YUV和RGB的转化：（两者可以通过矩阵相互转换）"><span class="toc-number"></span> <span class="toc-text">YUV和RGB的转化：（两者可以通过矩阵相互转换）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视频编码"><span class="toc-number"></span> <span class="toc-text">视频编码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#IPB帧"><span class="toc-number">1.</span> <span class="toc-text">IPB帧</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#H-264中IDR帧与I帧的理解："><span class="toc-number">2.</span> <span class="toc-text">H.264中IDR帧与I帧的理解：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#PTS与DTS"><span class="toc-number">3.</span> <span class="toc-text">PTS与DTS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#GOP"><span class="toc-number">4.</span> <span class="toc-text">GOP</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#LAME"><span class="toc-number">5.</span> <span class="toc-text">LAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#FDK-AAC"><span class="toc-number">6.</span> <span class="toc-text">FDK_AAC</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#X264"><span class="toc-number">7.</span> <span class="toc-text">X264</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -131,7 +136,66 @@
   
 
   <div class="content" itemprop="articleBody">
-    
+    <h5 id="声音的采集："><a href="#声音的采集：" class="headerlink" title="声音的采集："></a>声音的采集：</h5><p>1.采集频率： （人耳的范围是20Hz~20kHz），采样率需要是最大值的两倍，所以一般定为44.1kHz，表示每秒采集44100次。</p>
+<p>2.量化： 可以用16比特来模拟音频，所以幅度分为65536层。</p>
+<p>3.编码：采集好的数据为裸数据（PCM），则双声道，每秒需要的比特数为：</p>
+<p>44100 <em> 16 </em> 2  = 1378.125kbps </p>
+<p>每分钟则约为10M</p>
+<p>上述是一个基本的采集，也可以使用更加密集的采样率和采用4字节来表示一个采样，则数据流会更大。</p>
+<h5 id="音频编码："><a href="#音频编码：" class="headerlink" title="音频编码："></a>音频编码：</h5><p>根据不同场景选用不同的编码方式：</p>
+<p>WAV:在PCM数据格式前加上44字节，表示采样率，声道数，数据格式等信息。（无压缩，相当于原始文件）</p>
+<p>特点：音质特别好，大量软件都支持</p>
+<p>使用场景:保存音乐和音效素材</p>
+<p>MP3：使用LAME编码（MP3编码的一种），当参数较高时，非常接近WAV的效果，当然在不同场景下需要调整合适的参数。</p>
+<p>特点：音质在128kbps以上表现还不错，压缩比较高，大量软件都支持。</p>
+<p>使用场景:高比特率下对兼容性有要求的音乐</p>
+<p>AAC：新出现的编码方式，</p>
+<p>特点：在小雨128kbps的码率下表现优异</p>
+<p>使用场景：多用于视频中的音频轨编码</p>
+<p>Ogg编码</p>
+<p>非常有潜力的编码方式，尤其是在中低码率的场景下，可以用更低的码率获得更高的音色。</p>
+<p>特点： 可以用比MP3更低的码率实现更好的音质</p>
+<p>使用场景：语音聊天的音频消息</p>
+<h4 id="视频"><a href="#视频" class="headerlink" title="视频"></a>视频</h4><p>图像（屏幕分辨率：1280x780  表示竖直方向上有1280个像素，横向有780个像素）</p>
+<p>图像的数值表示：（屏幕显示图像必须要有RGB值）</p>
+<p>1.RGB表示</p>
+<p>​    浮点表示：取值范围为0.0~1.0，比如在OpenGL ES中，对每一个子像素点的表示使用的这种方式。</p>
+<p>​    整数表示：取值范围为0~255，8个比特表示一个子像素，32个比特表示一个像素。</p>
+<p>一张完整的图像，如果使用整数表示的方法：1280x720则大小为：<br>1280 <em> 720 </em> 4 = 3.516M</p>
+<p>这就是位图（bitmap）所占用的大小，每一张图像的裸数据都是很大的。</p>
+<p>所以就有了图像的压缩格式，比如 JPEG 压缩，JPEG提供的是静态压缩，由ISO制定，因为视频数据还有时间上的压缩，所以 JPEG 不能用于视频数据的压缩。</p>
+<p>2.YUV表示（只有Y数据的为黑白灰度图像）</p>
+<p>对于视频数据的裸数据，大多采用这种格式表示。其优点在于和RGB相比，只需要占用极少的频宽（RGB需要三个独立的视频信号同时传输）。</p>
+<p>Y：表示亮度</p>
+<p>U 和 V： 表示色度，指定像素的颜色。色度定义了颜色的两个方面，色调与饱和度，分别用Cr 和 Cb表示。</p>
+<p>YUV最常见的表示形式是 Y、U、V均使用8个比特来表示。</p>
+<p>YUV最常用的采样格式是 <code>YUV420</code> 即 4：2：0</p>
+<p>表示：每4个Y分量共用一组U,V分量。</p>
+<p>每个像素点的Y分量都会取值，而U和V分量则交替取值，比如前一行取值为4 : 2 : 0则下一行取值为4 : 0 : 2，由于每行只取一种色度，且与Y分量的比为2 : 1，所以最终色度的取值为原图的1/4。</p>
+<p>用YUV420表示一张图像，大小如下：</p>
+<p>1280 <em> 720 </em> 1 + 1280 <em> 720 </em> 0.5 = 1.318M  （Y所占大小 + UV所占大小）</p>
+<h4 id="YUV和RGB的转化：（两者可以通过矩阵相互转换）"><a href="#YUV和RGB的转化：（两者可以通过矩阵相互转换）" class="headerlink" title="YUV和RGB的转化：（两者可以通过矩阵相互转换）"></a>YUV和RGB的转化：（两者可以通过矩阵相互转换）</h4><p>iOS中摄像头采集到一帧数据后（YUV数据格式）<code>CMSampleBufferRef</code>我们可以调用<code>CVBufferGetAttachment</code>来获取<code>YCbCrMatrix</code>，用于决定使用哪一个矩阵进行转换。</p>
+<h4 id="视频编码"><a href="#视频编码" class="headerlink" title="视频编码"></a>视频编码</h4><p>和音频数据一样视频数据也需要做压缩，去除冗余信息。特别的视频数据前后有极强的相关性，也就是说除了空间上的冗余还有时间上的冗余。</p>
+<p>使用<code>帧间编码</code>可以去除时间上的冗余信息。</p>
+<p>使用<code>帧内编码</code>可以去除空间上的冗余信息。</p>
+<p>编码技术： 主要有ISO的 Mpeg1(用于VCD)  ，Mpeg2(用于DVD)， Mpeg4 AVC(流媒体使用最多)。</p>
+<p>ITU-T的H.264一系列编码标准。目前H.264采用各种前面编码方式的优点，为最常用的编码格式。</p>
+<h5 id="IPB帧"><a href="#IPB帧" class="headerlink" title="IPB帧"></a>IPB帧</h5><p>I帧：帧内编码帧（intra picture），I帧通常是每个GOP的第一个帧，压缩比较小，可以当做静态图片，主要为了去除空间冗余信息。</p>
+<p>P帧：前向预测编码帧（predictive-frame），通过将图像序列中前面已经编码的时间冗余信息去除达到较大压缩。</p>
+<p>B帧：双向预测内插编码帧（bi-directional interpolated prediction frame）既考虑前向已编码帧，又顾及序列后面的已编码帧之间的时间冗余信息。</p>
+<h5 id="H-264中IDR帧与I帧的理解："><a href="#H-264中IDR帧与I帧的理解：" class="headerlink" title="H.264中IDR帧与I帧的理解："></a>H.264中IDR帧与I帧的理解：</h5><p>IDR（isntantaneous decoding refresh picture）立即刷新帧， H264采用多帧预测，所以I帧之后的P帧可能会参考I帧之前的帧，而IDR帧则是特殊的I帧，意味着之后的帧不会再参考IDR帧之前的帧信息，这时解码器可以立即清空参考帧缓冲区，并把IDR作为参考帧。</p>
+<h5 id="PTS与DTS"><a href="#PTS与DTS" class="headerlink" title="PTS与DTS"></a>PTS与DTS</h5><p>DTS：Decoding Time Stamp 用于视频的解码</p>
+<p>PTS：Presentation Time Stamp 用于解码阶段进行视频的同步和输出。</p>
+<p>在没有B帧的情况下，PTS和DTS是一致的。因为有了B帧的存在，解码顺序发生改变，所以两者会有不同。</p>
+<p>DTS存在于压缩之后的数据之中，显示了什么时候需要解码。</p>
+<p>而PTS在采集数据的时候在数据之中，表明了什么时候显示这帧图像。</p>
+<h5 id="GOP"><a href="#GOP" class="headerlink" title="GOP"></a>GOP</h5><p>两个I帧之间形成的一组图片。在编码器编码时需要设置gop_size参数的值。应该根据不用的业务需求设置不同的参数大小。</p>
+<p><strong>交叉编译</strong>：对应于Native Compilation 编译本机使用的二进制文件，交叉编译为将源代码编译为其他设备运行二进制文件的过程。</p>
+<h5 id="LAME"><a href="#LAME" class="headerlink" title="LAME"></a>LAME</h5><p>最常用的Mp3编码引擎的开源库。</p>
+<h5 id="FDK-AAC"><a href="#FDK-AAC" class="headerlink" title="FDK_AAC"></a>FDK_AAC</h5><p>用于编码和解码AAC格式音频文件的开源库。</p>
+<h5 id="X264"><a href="#X264" class="headerlink" title="X264"></a>X264</h5><p>一个开源的H.264/MPEG-4 AVC视频编码函数库，是最好的有损视频编码器之一。</p>
+<p>支持在编码过程中随时改变码率，从而实现直播中的码率自适应。</p>
+
   </div>
 </article>
 
@@ -155,7 +219,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      
+      <ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#声音的采集："><span class="toc-number">1.</span> <span class="toc-text">声音的采集：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#音频编码："><span class="toc-number">2.</span> <span class="toc-text">音频编码：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视频"><span class="toc-number"></span> <span class="toc-text">视频</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#YUV和RGB的转化：（两者可以通过矩阵相互转换）"><span class="toc-number"></span> <span class="toc-text">YUV和RGB的转化：（两者可以通过矩阵相互转换）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#视频编码"><span class="toc-number"></span> <span class="toc-text">视频编码</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#IPB帧"><span class="toc-number">1.</span> <span class="toc-text">IPB帧</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#H-264中IDR帧与I帧的理解："><span class="toc-number">2.</span> <span class="toc-text">H.264中IDR帧与I帧的理解：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#PTS与DTS"><span class="toc-number">3.</span> <span class="toc-text">PTS与DTS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#GOP"><span class="toc-number">4.</span> <span class="toc-text">GOP</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#LAME"><span class="toc-number">5.</span> <span class="toc-text">LAME</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#FDK-AAC"><span class="toc-number">6.</span> <span class="toc-text">FDK_AAC</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#X264"><span class="toc-number">7.</span> <span class="toc-text">X264</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
