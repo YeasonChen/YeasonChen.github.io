@@ -16,7 +16,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/%E7%A8%8B%E5%BA%8F%E9%93%BE%E6%8E%A5/WX20180614-151639%402x.png?Expires=1533877895&OSSAccessKeyId=TMP.AQFsYyxstra2XKC0HTbs13W47I6cViP-eMW7YMRlXOBgDFj0SvewznW9CLcGADAtAhUAkld-4A8IpdE45goca8Rs75INlbACFFQgYMTVt9R9hKZIOp_NQHdh4Jms&Signature=YEHkSQzpdLPLXjdXxXK3i63zYCs%3D">
 <meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/%E7%A8%8B%E5%BA%8F%E9%93%BE%E6%8E%A5/QQ20180615-113646%402x.png?Expires=1533877822&OSSAccessKeyId=TMP.AQFsYyxstra2XKC0HTbs13W47I6cViP-eMW7YMRlXOBgDFj0SvewznW9CLcGADAtAhUAkld-4A8IpdE45goca8Rs75INlbACFFQgYMTVt9R9hKZIOp_NQHdh4Jms&Signature=inTqPV%2B8wPjIpHZ24ArDz1QGmJc%3D">
-<meta property="og:updated_time" content="2018-08-10T04:12:44.751Z">
+<meta property="og:updated_time" content="2018-08-10T04:21:46.417Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="程序链接">
 <meta name="twitter:description" content="程序编译过程: 源程序(hello.c) –预处理–&amp;gt;预处理文件( hello.i)–编译–&amp;gt;汇编文件–汇编–&amp;gt;机器代码(hello.o可重定向文件)–链接–&amp;gt;可执行文件 预处理执行操作:   1234通过指令进行预处理:$ gcc -E hello.c -o hello.i或$ cpp hello.c &amp;gt; hello.i  删除#define并展开所定义的宏 处理所">
@@ -160,18 +160,20 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">通过链接器进行链接:</span><br><span class="line">$ gcc -static -o myproc main.o test.o</span><br><span class="line">或</span><br><span class="line">$ ld -static -o myproc main.o test.o</span><br></pre></td></tr></table></figure>
 <p>三种目标文件:</p>
 <ol>
-<li>可重定位文件(<code>.o</code>):其代码和数据可以和其他可重定位文件合并成可执行文件<pre><code>- 每个`.o`文件由相应的`.c`文件生成
-- 每个`.o`文件代码和数据都是从0位置开始
-</code></pre></li>
-<li><p>可执行文件(<code>.out</code>)</p>
-<ul>
+<li>可重定位文件(<code>.o</code>):其代码和数据可以和其他可重定位文件合并成可执行文件<ul>
+<li>每个<code>.o</code>文件由相应的<code>.c</code>文件生成</li>
+<li>每个<code>.o</code>文件代码和数据都是从0位置开始</li>
+</ul>
+</li>
+<li>可执行文件(<code>.out</code>)<ul>
 <li>包含的代码和数据可以直接被复制到内存中执行</li>
 <li>代码和数据的地址为虚拟地址空间中的地址</li>
 </ul>
 </li>
-<li><p>共享目标文件(<code>.so</code>)</p>
-<pre><code>- 特殊的可重定位文件,在运行时被装入内存并自动链接,成为共享库文件
-</code></pre></li>
+<li>共享目标文件(<code>.so</code>)<ul>
+<li>特殊的可重定位文件,在运行时被装入内存并自动链接,成为共享库文件</li>
+</ul>
+</li>
 </ol>
 <p>链接的过程:</p>
 <ol>
