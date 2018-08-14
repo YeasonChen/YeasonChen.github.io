@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="系列文章均主要摘至:[总结]FFMPEG视音频编解码零基础学习方法  结构体分类a)        解协议（http,rtsp,rtmp,mms） AVIOContext，URLProtocol，URLContext主要存储视音频使用的协议的类型以及状态。URLProtocol存储输入视音频使用的封装格式。每种协议都对应一个URLProtocol结构。（注意：FFMPEG中文件也被当做一种协议“">
+<meta name="keywords" content="FFmpeg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FFmpeg-02 关键结构体分析">
+<meta property="og:url" content="http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/index.html">
+<meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="系列文章均主要摘至:[总结]FFMPEG视音频编解码零基础学习方法  结构体分类a)        解协议（http,rtsp,rtmp,mms） AVIOContext，URLProtocol，URLContext主要存储视音频使用的协议的类型以及状态。URLProtocol存储输入视音频使用的封装格式。每种协议都对应一个URLProtocol结构。（注意：FFMPEG中文件也被当做一种协议“">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/%E7%BB%93%E6%9E%84%E4%BD%93%E6%95%B4%E4%BD%93%E6%A1%86%E6%9E%B6.jpeg">
+<meta property="og:updated_time" content="2018-08-13T07:28:39.688Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FFmpeg-02 关键结构体分析">
+<meta name="twitter:description" content="系列文章均主要摘至:[总结]FFMPEG视音频编解码零基础学习方法  结构体分类a)        解协议（http,rtsp,rtmp,mms） AVIOContext，URLProtocol，URLContext主要存储视音频使用的协议的类型以及状态。URLProtocol存储输入视音频使用的封装格式。每种协议都对应一个URLProtocol结构。（注意：FFMPEG中文件也被当做一种协议“">
+<meta name="twitter:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/%E7%BB%93%E6%9E%84%E4%BD%93%E6%95%B4%E4%BD%93%E6%A1%86%E6%9E%B6.jpeg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>FFmpeg-02 关键结构体分析</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/08/13/FFmpeg-03-从解码开始了解使用流程/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/08/10/FFmpeg-01-概述与命令行使用/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&text=FFmpeg-02 关键结构体分析"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&is_video=false&description=FFmpeg-02 关键结构体分析"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=FFmpeg-02 关键结构体分析&body=Check out this article: http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&name=FFmpeg-02 关键结构体分析&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#结构体分类"><span class="toc-number">1.</span> <span class="toc-text">结构体分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#文件整体与结构体对应"><span class="toc-number">2.</span> <span class="toc-text">文件整体与结构体对应</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVFormatContext"><span class="toc-number">3.</span> <span class="toc-text">AVFormatContext</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVStream"><span class="toc-number">4.</span> <span class="toc-text">AVStream</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVCodecContext"><span class="toc-number">5.</span> <span class="toc-text">AVCodecContext</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVCodec"><span class="toc-number">6.</span> <span class="toc-text">AVCodec</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVFrame"><span class="toc-number">7.</span> <span class="toc-text">AVFrame</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVPacket"><span class="toc-number">8.</span> <span class="toc-text">AVPacket</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVIOContext"><span class="toc-number">9.</span> <span class="toc-text">AVIOContext</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        FFmpeg-02 关键结构体分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Yeason's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-08-13T03:01:12.000Z" itemprop="datePublished">2018-08-13</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/FFmpeg/">FFmpeg</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <blockquote>
+<p>系列文章均主要摘至:<a href="https://blog.csdn.net/leixiaohua1020/article/details/15811977" target="_blank" rel="noopener">[总结]FFMPEG视音频编解码零基础学习方法</a></p>
+</blockquote>
+<h4 id="结构体分类"><a href="#结构体分类" class="headerlink" title="结构体分类"></a>结构体分类</h4><p>a)        解协议（http,rtsp,rtmp,mms）</p>
+<p>AVIOContext，URLProtocol，URLContext主要存储视音频使用的协议的类型以及状态。URLProtocol存储输入视音频使用的封装格式。每种协议都对应一个URLProtocol结构。（注意：FFMPEG中文件也被当做一种协议“file”）</p>
+<p>b)        解封装（flv,avi,rmvb,mp4）</p>
+<p>AVFormatContext主要存储视音频封装格式中包含的信息；AVInputFormat存储输入视音频使用的封装格式。每种视音频封装格式都对应一个AVInputFormat 结构。</p>
+<p>c)        解码（h264,mpeg2,aac,mp3）</p>
+<p>每个AVStream存储一个视频/音频流的相关数据；每个AVStream对应一个AVCodecContext，存储该视频/音频流使用解码方式的相关数据；每个AVCodecContext中对应一个AVCodec，包含该视频/音频对应的解码器。每种解码器都对应一个AVCodec结构。</p>
+<p>d) 存数据</p>
+<p>视频的话，每个结构一般是存一帧；音频可能有好几帧</p>
+<p>解码前数据：AVPacket</p>
+<p>解码后数据：AVFrame</p>
+<p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/%E7%BB%93%E6%9E%84%E4%BD%93%E6%95%B4%E4%BD%93%E6%A1%86%E6%9E%B6.jpeg" alt="结构体整体框架"></p>
+<h4 id="文件整体与结构体对应"><a href="#文件整体与结构体对应" class="headerlink" title="文件整体与结构体对应"></a>文件整体与结构体对应</h4><ul>
+<li>容器／文件（Conainer/File）：即特定格式的多媒体文件，比如MP4、flv、mov等。   </li>
+<li>媒体流（Stream）：表示时间轴上的一段连续数据，如一段声音数据、一段视频数据或一段字幕数据，可以是压缩的，也可以是非压缩的，压缩的数据需要关联特定的编解码器。   </li>
+<li>数据帧／数据包（Frame/Packet）：通常，一个媒体流是由大量的数据帧组成的，对于压缩数据，帧对应着编解码器的最小处理单元，分属于不同媒体流的数据帧交错存储于容器之中。   </li>
+<li>编解码器：编解码器是以帧为单位实现压缩数据和原始数据之间的相互转换的。</li>
+</ul>
+<p>其中AVFormatContext就是对容器或者说媒体文件层次的一个抽象，该文件中（或者说在这个容器里面）包含了多路流（音频流、视频流、字幕流等），对流的抽象就是AVStream；在每一路流中都会描述这路流的编码格式，对编解码格式以及编解码器的抽象就是AVCodecCon-text与AVCodec；对于编码器或者解码器的输入输出部分，也就是压缩数据以及原始数据的抽象就是AVPacket与AVFrame。</p>
+<h4 id="AVFormatContext"><a href="#AVFormatContext" class="headerlink" title="AVFormatContext"></a>AVFormatContext</h4><p>在使用FFMPEG进行开发的时候，AVFormatContext是一个贯穿始终的数据结构，很多函数都要用到它作为参数。它是FFMPEG解封装（flv，mp4，rmvb，avi）功能的结构体</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">AVIOContext *pb：输入数据的缓存</span><br><span class="line"></span><br><span class="line">unsigned int nb_streams：视音频流的个数</span><br><span class="line"></span><br><span class="line">AVStream **streams：视音频流</span><br><span class="line"></span><br><span class="line">char filename[1024]：文件名</span><br><span class="line"></span><br><span class="line">int64_t duration：时长（单位：微秒us，转换为秒需要除以1000000）</span><br><span class="line"></span><br><span class="line">int bit_rate：比特率（单位bps，转换为kbps需要除以1000）</span><br><span class="line"></span><br><span class="line">AVDictionary *metadata：元数据</span><br></pre></td></tr></table></figure>
+<h4 id="AVStream"><a href="#AVStream" class="headerlink" title="AVStream"></a>AVStream</h4><p>AVStream是存储每一个视频/音频流信息的结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> index：标识该视频/音频流</span><br><span class="line"></span><br><span class="line">AVCodecContext *codec：指向该视频/音频流的AVCodecContext（它们是一一对应的关系）</span><br><span class="line"></span><br><span class="line">AVRational time_base：时基。通过该值可以把PTS，DTS转化为真正的时间。FFMPEG其他结构体中也有这个字段，但是根据我的经验，只有AVStream中的time_base是可用的。PTS*time_base=真正的时间</span><br><span class="line"></span><br><span class="line"><span class="keyword">int64_t</span> duration：该视频/音频流长度</span><br><span class="line"></span><br><span class="line">AVDictionary *metadata：元数据信息</span><br><span class="line"></span><br><span class="line">AVRational avg_frame_rate：帧率（注：对视频来说，这个挺重要的）</span><br><span class="line"></span><br><span class="line">AVPacket attached_pic：附带的图片。比如说一些MP3，AAC音频文件附带的专辑封面。</span><br></pre></td></tr></table></figure>
+<h4 id="AVCodecContext"><a href="#AVCodecContext" class="headerlink" title="AVCodecContext"></a>AVCodecContext</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> AVMediaType codec_type：编解码器的类型（视频，音频...）</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AVCodec</span>  *<span class="title">codec</span>：采用的解码器<span class="title">AVCodec</span>（<span class="title">H</span>.264,<span class="title">MPEG2</span>...）</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">int</span> <span class="title">bit_rate</span>：平均比特率</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">uint8_t</span> *<span class="title">extradata</span>;</span> <span class="keyword">int</span> extradata_size：针对特定编码器包含的附加信息（例如对于H<span class="number">.264</span>解码器来说，存储SPS，PPS等）</span><br><span class="line"></span><br><span class="line">AVRational time_base：根据该参数，可以把PTS转化为实际的时间（单位为秒s）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> width, height：如果是视频的话，代表宽和高</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> refs：运动估计参考帧的个数（H<span class="number">.264</span>的话会有多帧，MPEG2这类的一般就没有了）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> sample_rate：采样率（音频）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> channels：声道数（音频）</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> AVSampleFormat sample_fmt：采样格式</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> profile：型（H<span class="number">.264</span>里面就有，其他编码标准应该也有）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> level：级（和profile差不太多）</span><br></pre></td></tr></table></figure>
+<p><strong>1.codec_type</strong></p>
+<p>编解码器类型有以下几种：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> AVMediaType &#123;</span><br><span class="line">    AVMEDIA_TYPE_UNKNOWN = <span class="number">-1</span>,  <span class="comment">///&lt; Usually treated as AVMEDIA_TYPE_DATA</span></span><br><span class="line">    AVMEDIA_TYPE_VIDEO,</span><br><span class="line">    AVMEDIA_TYPE_AUDIO,</span><br><span class="line">    AVMEDIA_TYPE_DATA,          <span class="comment">///&lt; Opaque data information usually continuous</span></span><br><span class="line">    AVMEDIA_TYPE_SUBTITLE,</span><br><span class="line">    AVMEDIA_TYPE_ATTACHMENT,    <span class="comment">///&lt; Opaque data information usually sparse</span></span><br><span class="line">    AVMEDIA_TYPE_NB</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>2.sample_fmt</strong></p>
+<p>在FFMPEG中音频采样格式有以下几种：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> AVSampleFormat &#123;</span><br><span class="line">    AV_SAMPLE_FMT_NONE = <span class="number">-1</span>,</span><br><span class="line">    AV_SAMPLE_FMT_U8,          <span class="comment">///&lt; unsigned 8 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_S16,         <span class="comment">///&lt; signed 16 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_S32,         <span class="comment">///&lt; signed 32 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_FLT,         <span class="comment">///&lt; float</span></span><br><span class="line">    AV_SAMPLE_FMT_DBL,         <span class="comment">///&lt; double</span></span><br><span class="line"> </span><br><span class="line">    AV_SAMPLE_FMT_U8P,         <span class="comment">///&lt; unsigned 8 bits, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_S16P,        <span class="comment">///&lt; signed 16 bits, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_S32P,        <span class="comment">///&lt; signed 32 bits, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_FLTP,        <span class="comment">///&lt; float, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_DBLP,        <span class="comment">///&lt; double, planar</span></span><br><span class="line"> </span><br><span class="line">    AV_SAMPLE_FMT_NB           <span class="comment">///&lt; Number of sample formats. DO NOT USE if linking dynamically</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="AVCodec"><a href="#AVCodec" class="headerlink" title="AVCodec"></a>AVCodec</h4><p>AVCodec是存储编解码器信息的结构体</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const char *name：编解码器的名字，比较短</span><br><span class="line"></span><br><span class="line">const char *long_name：编解码器的名字，全称，比较长</span><br><span class="line"></span><br><span class="line">enum AVMediaType type：指明了类型，是视频，音频，还是字幕</span><br><span class="line"></span><br><span class="line">enum AVCodecID id：ID，不重复</span><br><span class="line"></span><br><span class="line">const AVRational *supported_framerates：支持的帧率（仅视频）</span><br><span class="line"></span><br><span class="line">const enum AVPixelFormat *pix_fmts：支持的像素格式（仅视频）</span><br><span class="line"></span><br><span class="line">const int *supported_samplerates：支持的采样率（仅音频）</span><br><span class="line"></span><br><span class="line">const enum AVSampleFormat *sample_fmts：支持的采样格式（仅音频）</span><br><span class="line"></span><br><span class="line">const uint64_t *channel_layouts：支持的声道数（仅音频）</span><br><span class="line"></span><br><span class="line">int priv_data_size：私有数据的大小</span><br></pre></td></tr></table></figure>
+<p><strong>1.enum AVMediaType type</strong></p>
+<p>AVMediaType定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">enum</span> AVMediaType &#123;</span><br><span class="line">    AVMEDIA_TYPE_UNKNOWN = <span class="number">-1</span>,  <span class="comment">///&lt; Usually treated as AVMEDIA_TYPE_DATA</span></span><br><span class="line">    AVMEDIA_TYPE_VIDEO,</span><br><span class="line">    AVMEDIA_TYPE_AUDIO,</span><br><span class="line">    AVMEDIA_TYPE_DATA,          <span class="comment">///&lt; Opaque data information usually continuous</span></span><br><span class="line">    AVMEDIA_TYPE_SUBTITLE,</span><br><span class="line">    AVMEDIA_TYPE_ATTACHMENT,    <span class="comment">///&lt; Opaque data information usually sparse</span></span><br><span class="line">    AVMEDIA_TYPE_NB</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>2.enum AVCodecID id</strong></p>
+<p>AVCodecID定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> AVCodecID &#123;</span><br><span class="line">    AV_CODEC_ID_NONE,</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* video codecs */</span></span><br><span class="line">    AV_CODEC_ID_MPEG1VIDEO,</span><br><span class="line">    AV_CODEC_ID_MPEG2VIDEO, <span class="comment">///&lt; preferred ID for MPEG-1/2 video decoding</span></span><br><span class="line">    AV_CODEC_ID_MPEG2VIDEO_XVMC,</span><br><span class="line">    AV_CODEC_ID_H261,</span><br><span class="line">    AV_CODEC_ID_H263,</span><br><span class="line">    AV_CODEC_ID_RV10,</span><br><span class="line">    AV_CODEC_ID_RV20,</span><br><span class="line">    AV_CODEC_ID_MJPEG,</span><br><span class="line">    AV_CODEC_ID_MJPEGB,</span><br><span class="line">    AV_CODEC_ID_LJPEG,</span><br><span class="line">    AV_CODEC_ID_SP5X,</span><br><span class="line">    AV_CODEC_ID_JPEGLS,</span><br><span class="line">    AV_CODEC_ID_MPEG4,</span><br><span class="line">    AV_CODEC_ID_RAWVIDEO,</span><br><span class="line">    AV_CODEC_ID_MSMPEG4V1,</span><br><span class="line">    AV_CODEC_ID_MSMPEG4V2,</span><br><span class="line">    AV_CODEC_ID_MSMPEG4V3,</span><br><span class="line">    AV_CODEC_ID_WMV1,</span><br><span class="line">    AV_CODEC_ID_WMV2,</span><br><span class="line">    AV_CODEC_ID_H263P,</span><br><span class="line">    AV_CODEC_ID_H263I,</span><br><span class="line">    AV_CODEC_ID_FLV1,</span><br><span class="line">    AV_CODEC_ID_SVQ1,</span><br><span class="line">    AV_CODEC_ID_SVQ3,</span><br><span class="line">    AV_CODEC_ID_DVVIDEO,</span><br><span class="line">    AV_CODEC_ID_HUFFYUV,</span><br><span class="line">    AV_CODEC_ID_CYUV,</span><br><span class="line">    AV_CODEC_ID_H264,</span><br><span class="line">    ...（代码太长，略）</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3.const enum AVPixelFormat *pix_fmts</strong></p>
+<p>AVPixelFormat定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> AVPixelFormat &#123;</span><br><span class="line">    AV_PIX_FMT_NONE = <span class="number">-1</span>,</span><br><span class="line">    AV_PIX_FMT_YUV420P,   <span class="comment">///&lt; planar YUV 4:2:0, 12bpp, (1 Cr &amp; Cb sample per 2x2 Y samples)</span></span><br><span class="line">    AV_PIX_FMT_YUYV422,   <span class="comment">///&lt; packed YUV 4:2:2, 16bpp, Y0 Cb Y1 Cr</span></span><br><span class="line">    AV_PIX_FMT_RGB24,     <span class="comment">///&lt; packed RGB 8:8:8, 24bpp, RGBRGB...</span></span><br><span class="line">    AV_PIX_FMT_BGR24,     <span class="comment">///&lt; packed RGB 8:8:8, 24bpp, BGRBGR...</span></span><br><span class="line">    AV_PIX_FMT_YUV422P,   <span class="comment">///&lt; planar YUV 4:2:2, 16bpp, (1 Cr &amp; Cb sample per 2x1 Y samples)</span></span><br><span class="line">    AV_PIX_FMT_YUV444P,   <span class="comment">///&lt; planar YUV 4:4:4, 24bpp, (1 Cr &amp; Cb sample per 1x1 Y samples)</span></span><br><span class="line">    AV_PIX_FMT_YUV410P,   <span class="comment">///&lt; planar YUV 4:1:0,  9bpp, (1 Cr &amp; Cb sample per 4x4 Y samples)</span></span><br><span class="line">    AV_PIX_FMT_YUV411P,   <span class="comment">///&lt; planar YUV 4:1:1, 12bpp, (1 Cr &amp; Cb sample per 4x1 Y samples)</span></span><br><span class="line">    AV_PIX_FMT_GRAY8,     <span class="comment">///&lt;        Y        ,  8bpp</span></span><br><span class="line">    AV_PIX_FMT_MONOWHITE, <span class="comment">///&lt;        Y        ,  1bpp, 0 is white, 1 is black, in each byte pixels are ordered from the msb to the lsb</span></span><br><span class="line">    AV_PIX_FMT_MONOBLACK, <span class="comment">///&lt;        Y        ,  1bpp, 0 is black, 1 is white, in each byte pixels are ordered from the msb to the lsb</span></span><br><span class="line">    AV_PIX_FMT_PAL8,      <span class="comment">///&lt; 8 bit with PIX_FMT_RGB32 palette</span></span><br><span class="line">    AV_PIX_FMT_YUVJ420P,  <span class="comment">///&lt; planar YUV 4:2:0, 12bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV420P and setting color_range</span></span><br><span class="line">    AV_PIX_FMT_YUVJ422P,  <span class="comment">///&lt; planar YUV 4:2:2, 16bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV422P and setting color_range</span></span><br><span class="line">    AV_PIX_FMT_YUVJ444P,  <span class="comment">///&lt; planar YUV 4:4:4, 24bpp, full scale (JPEG), deprecated in favor of PIX_FMT_YUV444P and setting color_range</span></span><br><span class="line">    AV_PIX_FMT_XVMC_MPEG2_MC,<span class="comment">///&lt; XVideo Motion Acceleration via common packet passing</span></span><br><span class="line">    AV_PIX_FMT_XVMC_MPEG2_IDCT,</span><br><span class="line">    ...（代码太长，略）</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>4.const enum AVSampleFormat *sample_fmts</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> AVSampleFormat &#123;</span><br><span class="line"></span><br><span class="line">    AV_SAMPLE_FMT_NONE = <span class="number">-1</span>,</span><br><span class="line">    AV_SAMPLE_FMT_U8,          <span class="comment">///&lt; unsigned 8 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_S16,         <span class="comment">///&lt; signed 16 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_S32,         <span class="comment">///&lt; signed 32 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_FLT,         <span class="comment">///&lt; float</span></span><br><span class="line">    AV_SAMPLE_FMT_DBL,         <span class="comment">///&lt; double</span></span><br><span class="line"></span><br><span class="line">	AV_SAMPLE_FMT_U8P,         <span class="comment">///&lt; unsigned 8 bits, planar</span></span><br><span class="line">	AV_SAMPLE_FMT_S16P,        <span class="comment">///&lt; signed 16 bits, planar</span></span><br><span class="line">	AV_SAMPLE_FMT_S32P,        <span class="comment">///&lt; signed 32 bits, planar</span></span><br><span class="line">	AV_SAMPLE_FMT_FLTP,        <span class="comment">///&lt; float, planar</span></span><br><span class="line">	AV_SAMPLE_FMT_DBLP,        <span class="comment">///&lt; double, planar</span></span><br><span class="line"> </span><br><span class="line">	AV_SAMPLE_FMT_NB           <span class="comment">///&lt; Number of sample formats. DO NOT USE if linking 	dynamically</span></span><br></pre></td></tr></table></figure>
+<p>};</p>
+<p>在FFMPEG中,每一个编解码器对应一个该结构体.</p>
+<p>下面简单介绍一下遍历ffmpeg中的解码器信息的方法（这些解码器以一个链表的形式存储）：</p>
+<p>1.注册所有编解码器：av_register_all();</p>
+<p>2.声明一个AVCodec类型的指针，比如说AVCodec* first_c;</p>
+<p>3.调用av_codec_next()函数，即可获得指向链表下一个解码器的指针，循环往复可以获得所有解码器的信息。注意，如果想要获得指向第一个解码器的指针，则需要将该函数的参数设置为NULL。</p>
+<h4 id="AVFrame"><a href="#AVFrame" class="headerlink" title="AVFrame"></a>AVFrame</h4><p>AVFrame结构体一般用于存储原始数据（即非压缩数据，例如对视频来说是YUV，RGB，对音频来说是PCM），此外还包含了一些相关的信息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uint8_t</span> *data[AV_NUM_DATA_POINTERS]：解码后原始数据（对视频来说是YUV，RGB，对音频来说是PCM）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> linesize[AV_NUM_DATA_POINTERS]：data中“一行”数据的大小。注意：未必等于图像的宽，一般大于图像的宽。</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> width, height：视频帧宽和高（<span class="number">1920</span>x1080,<span class="number">1280</span>x720...）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> nb_samples：音频的一个AVFrame中可能包含多个音频帧，在此标记包含了几个</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> format：解码后原始数据类型（YUV420，YUV422，RGB24...）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> key_frame：是否是关键帧</span><br><span class="line"></span><br><span class="line"><span class="keyword">enum</span> AVPictureType pict_type：帧类型（I,B,P...）</span><br><span class="line"></span><br><span class="line">AVRational sample_aspect_ratio：宽高比（<span class="number">16</span>:<span class="number">9</span>，<span class="number">4</span>:<span class="number">3.</span>..）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int64_t</span> pts：显示时间戳</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> coded_picture_number：编码帧序号</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> display_picture_number：显示帧序号</span><br><span class="line"></span><br><span class="line"><span class="keyword">int8_t</span> *qscale_table：QP表</span><br><span class="line"></span><br><span class="line"><span class="keyword">uint8_t</span> *mbskip_table：跳过宏块表</span><br><span class="line"></span><br><span class="line"><span class="keyword">int16_t</span> (*motion_val[<span class="number">2</span>])[<span class="number">2</span>]：运动矢量表</span><br><span class="line"></span><br><span class="line"><span class="keyword">uint32_t</span> *mb_type：宏块类型表</span><br><span class="line"></span><br><span class="line"><span class="keyword">short</span> *dct_coeff：DCT系数，这个没有提取过</span><br><span class="line"></span><br><span class="line"><span class="keyword">int8_t</span> *ref_index[<span class="number">2</span>]：运动估计参考帧列表（貌似H<span class="number">.264</span>这种比较新的标准才会涉及到多参考帧）</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> interlaced_frame：是否是隔行扫描</span><br><span class="line"></span><br><span class="line"><span class="keyword">uint8_t</span> motion_subsample_log2：一个宏块中的运动矢量采样个数，取<span class="built_in">log</span>的</span><br></pre></td></tr></table></figure>
+<p><strong>1.data[]</strong></p>
+<p>对于packed格式的数据（例如RGB24），会存到data[0]里面。</p>
+<p>对于planar格式的数据（例如YUV420P），则会分开成data[0]，data[1]，data[2]…（YUV420P中data[0]存Y，data[1]存U，data[2]存V）</p>
+<p><strong>2.pict_type</strong></p>
+<p>包含以下类型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">enum</span> AVPictureType &#123;</span><br><span class="line">    AV_PICTURE_TYPE_NONE = <span class="number">0</span>, <span class="comment">///&lt; Undefined</span></span><br><span class="line">    AV_PICTURE_TYPE_I,     <span class="comment">///&lt; Intra</span></span><br><span class="line">    AV_PICTURE_TYPE_P,     <span class="comment">///&lt; Predicted</span></span><br><span class="line">    AV_PICTURE_TYPE_B,     <span class="comment">///&lt; Bi-dir predicted</span></span><br><span class="line">    AV_PICTURE_TYPE_S,     <span class="comment">///&lt; S(GMC)-VOP MPEG4</span></span><br><span class="line">    AV_PICTURE_TYPE_SI,    <span class="comment">///&lt; Switching Intra</span></span><br><span class="line">    AV_PICTURE_TYPE_SP,    <span class="comment">///&lt; Switching Predicted</span></span><br><span class="line">    AV_PICTURE_TYPE_BI,    <span class="comment">///&lt; BI type</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>3.sample_aspect_ratio</strong></p>
+<p>宽高比是一个分数，FFMPEG中用AVRational表达分数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">AVRational</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> num; <span class="comment">///&lt; numerator</span></span><br><span class="line">    <span class="keyword">int</span> den; <span class="comment">///&lt; denominator</span></span><br></pre></td></tr></table></figure>
+<p>还有一些与专业视频压缩相关的参数因为暂时理解不了所以没有摘上来.有需要可以点击:<a href="https://blog.csdn.net/leixiaohua1020/article/details/15811977" target="_blank" rel="noopener">详情</a></p>
+<h4 id="AVPacket"><a href="#AVPacket" class="headerlink" title="AVPacket"></a>AVPacket</h4><p>AVPacket是存储压缩编码数据相关信息的结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">uint8_t</span> *data：压缩编码的数据。</span><br><span class="line"></span><br><span class="line">例如对于H<span class="number">.264</span>来说。<span class="number">1</span>个AVPacket的data通常对应一个NAL。</span><br><span class="line"></span><br><span class="line">注意：在这里只是对应，而不是一模一样。他们之间有微小的差别：使用FFMPEG类库分离出多媒体文件中的H<span class="number">.264</span>码流</span><br><span class="line"></span><br><span class="line">因此在使用FFMPEG进行视音频处理的时候，常常可以将得到的AVPacket的data数据直接写成文件，从而得到视音频的码流文件。</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>   size：data的大小</span><br><span class="line"></span><br><span class="line"><span class="keyword">int64_t</span> pts：显示时间戳</span><br><span class="line"></span><br><span class="line"><span class="keyword">int64_t</span> dts：解码时间戳</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span>   stream_index：标识该AVPacket所属的视频/音频流。</span><br></pre></td></tr></table></figure>
+<h4 id="AVIOContext"><a href="#AVIOContext" class="headerlink" title="AVIOContext"></a>AVIOContext</h4><p>AVIOContext是FFMPEG管理输入输出数据的结构体</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> *buffer：缓存开始位置</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> buffer_size：缓存大小（默认<span class="number">32768</span>）</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> *buf_ptr：当前指针读取到的位置</span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> *buf_end：缓存结束的位置</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> *opaque：URLContext结构体</span><br></pre></td></tr></table></figure>
+<p>在解码的情况下，buffer用于存储ffmpeg读入的数据。例如打开一个视频文件的时候，先把数据从硬盘读入buffer，然后在送给解码器用于解码.</p>
+<p>其中opaque指向了URLContext。注意，这个结构体并不在FFMPEG提供的头文件中，而是在FFMPEG的源代码中。从FFMPEG源代码中翻出的定义如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">URLContext</span> &#123;</span></span><br><span class="line">	<span class="keyword">const</span> AVClass *av_class; <span class="comment">///&lt; information for av_log(). Set by url_open().</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">URLProtocol</span> *<span class="title">prot</span>;</span></span><br><span class="line">	<span class="keyword">int</span> flags;</span><br><span class="line">	<span class="keyword">int</span> is_streamed;  <span class="comment">/**&lt; true if streamed (no seek possible), default = false */</span></span><br><span class="line">	<span class="keyword">int</span> max_packet_size;  <span class="comment">/**&lt; if non zero, the stream is packetized with this max packet size */</span></span><br><span class="line">	<span class="keyword">void</span> *priv_data;</span><br><span class="line">	<span class="keyword">char</span> *filename; <span class="comment">/**&lt; specified URL */</span></span><br><span class="line">	<span class="keyword">int</span> is_connected;</span><br><span class="line">	AVIOInterruptCB interrupt_callback;</span><br><span class="line">&#125; URLContext;</span><br></pre></td></tr></table></figure>
+<p>URLContext结构体中还有一个结构体URLProtocol。注：每种协议（rtp，rtmp，file等）对应一个URLProtocol。这个结构体也不在FFMPEG提供的头文件中。从FFMPEG源代码中翻出其的定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">URLProtocol</span> &#123;</span></span><br><span class="line">	<span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">	<span class="keyword">int</span> (*url_open)(URLContext *h, <span class="keyword">const</span> <span class="keyword">char</span> *url, <span class="keyword">int</span> flags);</span><br><span class="line">	<span class="keyword">int</span> (*url_read)(URLContext *h, <span class="keyword">unsigned</span> <span class="keyword">char</span> *buf, <span class="keyword">int</span> size);</span><br><span class="line">	<span class="keyword">int</span> (*url_write)(URLContext *h, <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> *buf, <span class="keyword">int</span> size);</span><br><span class="line">	<span class="keyword">int64_t</span> (*url_seek)(URLContext *h, <span class="keyword">int64_t</span> pos, <span class="keyword">int</span> whence);</span><br><span class="line">	<span class="keyword">int</span> (*url_close)(URLContext *h);</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">URLProtocol</span> *<span class="title">next</span>;</span></span><br><span class="line">	<span class="keyword">int</span> (*url_read_pause)(URLContext *h, <span class="keyword">int</span> pause);</span><br><span class="line">	<span class="keyword">int64_t</span> (*url_read_seek)(URLContext *h, <span class="keyword">int</span> stream_index,</span><br><span class="line">		<span class="keyword">int64_t</span> timestamp, <span class="keyword">int</span> flags);</span><br><span class="line">	<span class="keyword">int</span> (*url_get_file_handle)(URLContext *h);</span><br><span class="line">	<span class="keyword">int</span> priv_data_size;</span><br><span class="line">	<span class="keyword">const</span> AVClass *priv_data_class;</span><br><span class="line">	<span class="keyword">int</span> flags;</span><br><span class="line">	<span class="keyword">int</span> (*url_check)(URLContext *h, <span class="keyword">int</span> mask);</span><br><span class="line">&#125; URLProtocol;</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#结构体分类"><span class="toc-number">1.</span> <span class="toc-text">结构体分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#文件整体与结构体对应"><span class="toc-number">2.</span> <span class="toc-text">文件整体与结构体对应</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVFormatContext"><span class="toc-number">3.</span> <span class="toc-text">AVFormatContext</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVStream"><span class="toc-number">4.</span> <span class="toc-text">AVStream</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVCodecContext"><span class="toc-number">5.</span> <span class="toc-text">AVCodecContext</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVCodec"><span class="toc-number">6.</span> <span class="toc-text">AVCodec</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVFrame"><span class="toc-number">7.</span> <span class="toc-text">AVFrame</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVPacket"><span class="toc-number">8.</span> <span class="toc-text">AVPacket</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AVIOContext"><span class="toc-number">9.</span> <span class="toc-text">AVIOContext</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&text=FFmpeg-02 关键结构体分析"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&is_video=false&description=FFmpeg-02 关键结构体分析"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=FFmpeg-02 关键结构体分析&body=Check out this article: http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&title=FFmpeg-02 关键结构体分析"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/08/13/FFmpeg-02-关键结构体分析/&name=FFmpeg-02 关键结构体分析&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Yeason Chen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+

@@ -14,12 +14,12 @@
 <meta property="og:site_name" content="Yeason&#39;s blog">
 <meta property="og:description" content="FFmpeg是一套可以用来记录、处理数字音频、视频，并将其转换为流的开源框架. 先大致了解一下FFmpeg的大体结构.  FFmpeg:用于转码、推流、Dump媒体文件. FFplay:播放媒体文件. FFprobe:获取媒体文件信息.  AVUtil：核心工具库，该模块是最基础的模块之一，下面的许多其他模块都会依赖该库做一些基本的音视频处理操作。    AVFormat：文件格式和协议库，该模块">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/ffmpeg-%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84.png?Expires=1533891189&OSSAccessKeyId=TMP.AQFsYyxstra2XKC0HTbs13W47I6cViP-eMW7YMRlXOBgDFj0SvewznW9CLcGADAtAhUAkld-4A8IpdE45goca8Rs75INlbACFFQgYMTVt9R9hKZIOp_NQHdh4Jms&Signature=o0HQfhjg5HQXtisS6Qh207JTvPc%3D">
-<meta property="og:updated_time" content="2018-08-10T07:54:43.696Z">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/ffmpeg-%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84.png">
+<meta property="og:updated_time" content="2018-08-13T03:06:50.663Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FFmpeg-01.概述与命令行使用">
 <meta name="twitter:description" content="FFmpeg是一套可以用来记录、处理数字音频、视频，并将其转换为流的开源框架. 先大致了解一下FFmpeg的大体结构.  FFmpeg:用于转码、推流、Dump媒体文件. FFplay:播放媒体文件. FFprobe:获取媒体文件信息.  AVUtil：核心工具库，该模块是最基础的模块之一，下面的许多其他模块都会依赖该库做一些基本的音视频处理操作。    AVFormat：文件格式和协议库，该模块">
-<meta name="twitter:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/ffmpeg-%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84.png?Expires=1533891189&OSSAccessKeyId=TMP.AQFsYyxstra2XKC0HTbs13W47I6cViP-eMW7YMRlXOBgDFj0SvewznW9CLcGADAtAhUAkld-4A8IpdE45goca8Rs75INlbACFFQgYMTVt9R9hKZIOp_NQHdh4Jms&Signature=o0HQfhjg5HQXtisS6Qh207JTvPc%3D">
+<meta name="twitter:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/ffmpeg-%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84.png">
     
     
         
@@ -68,6 +68,8 @@
     <br/>
     <span id="actions">
       <ul>
+        
+        <li><a class="icon" href="/2018/08/13/FFmpeg-02-关键结构体分析/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" href="/2018/08/10/音视频基础-基础概念/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -138,7 +140,7 @@
   <div class="content" itemprop="articleBody">
     <p><strong>FFmpeg是一套可以用来记录、处理数字音频、视频，并将其转换为流的开源框架.</strong></p>
 <p>先大致了解一下FFmpeg的大体结构.</p>
-<p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/ffmpeg-%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84.png?Expires=1533891189&amp;OSSAccessKeyId=TMP.AQFsYyxstra2XKC0HTbs13W47I6cViP-eMW7YMRlXOBgDFj0SvewznW9CLcGADAtAhUAkld-4A8IpdE45goca8Rs75INlbACFFQgYMTVt9R9hKZIOp_NQHdh4Jms&amp;Signature=o0HQfhjg5HQXtisS6Qh207JTvPc%3D" alt="FFmpeg结构"></p>
+<p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/ffmpeg-%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84.png" alt="FFmpeg结构"></p>
 <p><strong>FFmpeg</strong>:用于转码、推流、Dump媒体文件.</p>
 <p><strong>FFplay</strong>:播放媒体文件.</p>
 <p><strong>FFprobe</strong>:获取媒体文件信息.</p>
