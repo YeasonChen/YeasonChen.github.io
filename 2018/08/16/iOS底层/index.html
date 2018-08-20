@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="OC对象的本质是C的结构体NSObject对象占用多大的内存? 123struct NSObject_IMP &amp;#123;	Class isa; // 指针&amp;#125; getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节]malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节]) lldb: 可以查看内存也可以修改内存memo">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS底层">
+<meta property="og:url" content="http://yoursite.com/2018/08/16/iOS底层/index.html">
+<meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="OC对象的本质是C的结构体NSObject对象占用多大的内存? 123struct NSObject_IMP &amp;#123;	Class isa; // 指针&amp;#125; getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节]malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节]) lldb: 可以查看内存也可以修改内存memo">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-16T05:39:27.700Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS底层">
+<meta name="twitter:description" content="OC对象的本质是C的结构体NSObject对象占用多大的内存? 123struct NSObject_IMP &amp;#123;	Class isa; // 指针&amp;#125; getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节]malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节]) lldb: 可以查看内存也可以修改内存memo">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>iOS底层</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/08/19/Grammar-02-名词/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/08/15/Grammar-01-英语体系-词性和成分/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/08/16/iOS底层/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/08/16/iOS底层/&text=iOS底层"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/08/16/iOS底层/&is_video=false&description=iOS底层"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS底层&body=Check out this article: http://yoursite.com/2018/08/16/iOS底层/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/08/16/iOS底层/&name=iOS底层&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#OC对象的本质是C的结构体"><span class="toc-number">1.</span> <span class="toc-text">OC对象的本质是C的结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isa指针"><span class="toc-number">2.</span> <span class="toc-text">isa指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KVC"><span class="toc-number">3.</span> <span class="toc-text">KVC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Category"><span class="toc-number">4.</span> <span class="toc-text">Category</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Load-Initialize"><span class="toc-number">4.1.</span> <span class="toc-text">Load Initialize</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        iOS底层
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Yeason's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-08-16T05:38:46.000Z" itemprop="datePublished">2018-08-16</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/iOS/">iOS</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="OC对象的本质是C的结构体"><a href="#OC对象的本质是C的结构体" class="headerlink" title="OC对象的本质是C的结构体"></a>OC对象的本质是C的结构体</h3><p>NSObject对象占用多大的内存?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">struct NSObject_IMP &#123;</span><br><span class="line">	Class isa; // 指针</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节]<br>malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节])</p>
+<p>lldb: 可以查看内存也可以修改内存<br><code>memory read address</code>  <code>memory write</code></p>
+<p>malloc 系统在分配内存时也会有内存对齐,(16 32 48 128等),所以有些结构体需要24字节的内存,系统会分配32个字节</p>
+<p><code>class</code>方法返回的一直都是类对象,(实例对象或类名调用都是返回类对象)<br>获取元类对象:<br><code>object_getclass()</code>传入类对象会返回元类对象,传入实例会返回类对象(这里返回的是传入对象的<code>isa</code>)<br><code>objc_getClass()</code>传入字符串,返回类对象</p>
+<p><code>class_isMetaClass()</code>传入类对象,判断是否是元类对象</p>
+<h3 id="isa指针"><a href="#isa指针" class="headerlink" title="isa指针"></a>isa指针</h3><p>NSObject的元类对象的supperclass指向NSObject类对象,而OC中发消息其实是不区分方法是加号开头还是减号开头,只要有对应方法就会调用.<br>所以如果给一个类对象发没有实现的消息,而且NSObject中有相应的对象方法,会调用到该对象方法.</p>
+<p>isa指针: 并没有直接指向类对象或元类对象,需要进行一次运算才能得到类对象或元类对象的地址</p>
+<p>###KVO(是同步执行的,不要在线程间使用kvo技术)<br>kvo的触发是在<code>didChangeValueForKey:(NSString *)key</code>中实现的,该方法会判断是否调用<code>willChangeValueForKey:(NSString *)key</code>,有调用才会触发kvo.</p>
+<p>被监听的实例对象会动态产生一个子类(KVONotifi_Name),并修改实例isa指向新的类,然后实例调用方法的时候会调用到KVONotifi_Name的修改过的set方法, KVONotifi_Name的isa指向自己的元类.</p>
+<p>KVO实现的时候会调用内部的<code>willChangeValueForKey:(NSString *)key</code> 和 <code>didChangeValueForKey:(NSString *)key</code><br>如果想要在设置的值满足一定条件的时候触发KVO可以设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 禁止系统的自动调用</span><br><span class="line">+ (BOOL)automaticallyNotifiesObserversOfName &#123;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 手动调用这两个方法(缺一不可)则会触发KVO</span><br><span class="line">- (void)setName:(NSString *)name &#123;</span><br><span class="line">    if ([name  isEqual: @&quot;yea&quot;]) &#123;</span><br><span class="line">        [self willChangeValueForKey:@&quot;name&quot;];</span><br><span class="line">        _name = name;</span><br><span class="line">        [self didChangeValueForKey:@&quot;name&quot;];</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        _name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="KVC"><a href="#KVC" class="headerlink" title="KVC"></a>KVC</h3><p>会先去找setName 和 _setName方法,没有的话会判断是否允许直接访问成员变量,不允许直接报错,允许的话会去找成员变量设置.</p>
+<p>_Key,  </p>
+<p>_isKey ,key, isKey这几个成员变量去设置,没有还是会报错.</p>
+<p>KVC即使没有set方法,也会内部调用手动触发KVO</p>
+<h3 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h3><p>每个分类都会变成category_t类型的结构体,结构体中包含了有分类的实例方法列表,对象方法列表,属性列表,协议列表,然后runtime会把相应的列表合并到原来的类中,根据源码合并的方法,</p>
+<p>[[后编译分类的方法列表], [先编译分类的方法列表], [原来类的方法列表]]</p>
+<p>会把分类的方法放在前面,且最后编译的分类会在最前面,所以方法调用的时候,会优先调用后面编译的分类,最后才是原来的类方法.(分类后编译先调用)</p>
+<p>分类里面不能添加实例变量,因为类对象中的实例变量所在结构体只读.编译之后就不可以添加.</p>
+<h4 id="Load-Initialize"><a href="#Load-Initialize" class="headerlink" title="Load Initialize"></a>Load Initialize</h4><p> <code>load</code>每个分类中都可以添加分类方法.runtime加载类和分类进内存的时候调用.<br> 在合并之后的类中,也会有很多个load方法,但是这里的调用是直接找到对应的方法实现(原来类的load方法, 分类一的load方法, 分类二的load方法)然后调用.因此可以准确的调用load方法.(跟一般的通过isa指针发消息的机制不一样)</p>
+<p> load的调用顺序:(先编译先调用)<br> 首先根据源码会调用原来类的load方法,再调用分类.而在原来类中,会按照编译先后顺序调用Load方法,在调用一个类的load方法时,会递归先调用父类的load方法.<br> 因为最后的调用顺序为:<br> (先编译的类的父类)&gt;(先编译的类)&gt;(后编译的类的父类)&gt;(后编译的类)&gt;(先编译的分类load)&gt;(后编译的分类Load)</p>
+<p> <code>Initialize</code>第一次接受消息时调用(消息发送机制,会优先调用分类的方法).<br> <code>Initialize</code>方法在调用的时候内部会调用父类的<code>Initialize</code>方法.<br> 所以父类的<code>Initialize</code>方法可能会被调用多次.<br> 如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Person 有Initialize 方法</span><br><span class="line">Student继承至Person,且没有Initialize 方法</span><br><span class="line">Teacher继承至Person,且没有Initialize 方法</span><br><span class="line"></span><br><span class="line">三个发消息后,Person`Initialize `方法会调用三次,但并不是Person初始化三次,而是各自初始化一次,Student和Teacher也初始化了,只是调用了Person的方法而已</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#OC对象的本质是C的结构体"><span class="toc-number">1.</span> <span class="toc-text">OC对象的本质是C的结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isa指针"><span class="toc-number">2.</span> <span class="toc-text">isa指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KVC"><span class="toc-number">3.</span> <span class="toc-text">KVC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Category"><span class="toc-number">4.</span> <span class="toc-text">Category</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Load-Initialize"><span class="toc-number">4.1.</span> <span class="toc-text">Load Initialize</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/08/16/iOS底层/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/08/16/iOS底层/&text=iOS底层"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/08/16/iOS底层/&is_video=false&description=iOS底层"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS底层&body=Check out this article: http://yoursite.com/2018/08/16/iOS底层/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/08/16/iOS底层/&title=iOS底层"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/08/16/iOS底层/&name=iOS底层&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Yeason Chen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
