@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Tagged Pointer从64bit开始，iOS引入了Tagged Pointer技术，用于优化NSNumber、NSDate、NSString等小对象的存储. 在没有使用Tagged Pointer之前， NSNumber等对象需要动态分配内存、维护引用计数等，NSNumber指针存储的是堆中NSNumber对象的地址值. 使用Tagged Pointer之后，NSNumber指针里面存储的">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-内存管理">
+<meta property="og:url" content="http://yoursite.com/2018/08/22/iOS-内存管理/index.html">
+<meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="Tagged Pointer从64bit开始，iOS引入了Tagged Pointer技术，用于优化NSNumber、NSDate、NSString等小对象的存储. 在没有使用Tagged Pointer之前， NSNumber等对象需要动态分配内存、维护引用计数等，NSNumber指针存储的是堆中NSNumber对象的地址值. 使用Tagged Pointer之后，NSNumber指针里面存储的">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/sidetable%E4%B8%8E%E5%BC%B1%E5%BC%95%E7%94%A8%E8%A1%A8.png">
+<meta property="og:updated_time" content="2018-08-23T08:51:06.086Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-内存管理">
+<meta name="twitter:description" content="Tagged Pointer从64bit开始，iOS引入了Tagged Pointer技术，用于优化NSNumber、NSDate、NSString等小对象的存储. 在没有使用Tagged Pointer之前， NSNumber等对象需要动态分配内存、维护引用计数等，NSNumber指针存储的是堆中NSNumber对象的地址值. 使用Tagged Pointer之后，NSNumber指针里面存储的">
+<meta name="twitter:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/sidetable%E4%B8%8E%E5%BC%B1%E5%BC%95%E7%94%A8%E8%A1%A8.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>iOS-内存管理</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2018/08/20/iOS-Runtime/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/08/22/iOS-内存管理/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/08/22/iOS-内存管理/&text=iOS-内存管理"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/08/22/iOS-内存管理/&is_video=false&description=iOS-内存管理"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS-内存管理&body=Check out this article: http://yoursite.com/2018/08/22/iOS-内存管理/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/08/22/iOS-内存管理/&name=iOS-内存管理&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Tagged-Pointer"><span class="toc-number">1.</span> <span class="toc-text">Tagged Pointer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#引用计数存储"><span class="toc-number">2.</span> <span class="toc-text">引用计数存储</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        iOS-内存管理
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Yeason's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-08-22T03:14:50.000Z" itemprop="datePublished">2018-08-22</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/iOS/">iOS</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h4 id="Tagged-Pointer"><a href="#Tagged-Pointer" class="headerlink" title="Tagged Pointer"></a>Tagged Pointer</h4><p>从64bit开始，iOS引入了Tagged Pointer技术，用于优化NSNumber、NSDate、NSString等小对象的存储.</p>
+<p>在没有使用Tagged Pointer之前， NSNumber等对象需要动态分配内存、维护引用计数等，NSNumber指针存储的是堆中NSNumber对象的地址值.</p>
+<p>使用Tagged Pointer之后，NSNumber指针里面存储的数据变成了：Tag + Data，也就是将数据直接存储在了指针中.</p>
+<p>当指针不够存储数据时，才会使用动态分配内存的方式来存储数据.</p>
+<p>系统内部的<code>objc_msgsend</code>等很多方法都会对Tagged Pointer进行判断,因为Tagged Pointer后的指针已经不含有isa,所以不能找到发送消息需要直接返回.</p>
+<p>Tagged Pointer的判断: </p>
+<ul>
+<li><p>iOS平台，最高有效位是1（第64bit）</p>
+</li>
+<li><p>Mac平台，最低有效位是1</p>
+</li>
+</ul>
+<h4 id="引用计数存储"><a href="#引用计数存储" class="headerlink" title="引用计数存储"></a>引用计数存储</h4><p>从64bit开始,优化过的isa可以直接存储引用计数,如果引用计数过大的话会存储在SideTable中.</p>
+<p>SideTable的结构如下:</p>
+<p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/sidetable%E4%B8%8E%E5%BC%B1%E5%BC%95%E7%94%A8%E8%A1%A8.png" alt=""></p>
+<p><code>weak_table_t</code>为全局的弱引用哈希表,通过对象地址找到<code>weak_entries</code>,<code>weak_entries</code>结构体中包含两个成员:</p>
+<ul>
+<li><p>一个是<code>weak_entry_t</code>结构体,该结构体内包含对象的地址,以及所有弱引用的地址,在对象被释放时,去取出所有地址赋值为nil,还有一个<code>inline_ref</code>,表示如果弱引用的对象较少时,会存储在其中(大小为4).</p>
+</li>
+<li><p>另一个是<code>num_entries</code>用于在数组空间不够时扩容.</p>
+</li>
+</ul>
+<p>下面从获取引用计数的方法来窥探各个结构的作用:<br>使用<code>retainCount</code>方法获取引用计数器会来到下面这个方法:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">inline</span> <span class="keyword">uintptr_t</span> </span><br><span class="line">objc_object::rootRetainCount()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (isTaggedPointer()) <span class="keyword">return</span> (<span class="keyword">uintptr_t</span>)<span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">    sidetable_lock();</span><br><span class="line">    <span class="keyword">isa_t</span> bits = LoadExclusive(&amp;isa.bits);</span><br><span class="line">    ClearExclusive(&amp;isa.bits);</span><br><span class="line">    <span class="keyword">if</span> (bits.nonpointer) &#123;</span><br><span class="line">        <span class="keyword">uintptr_t</span> rc = <span class="number">1</span> + bits.extra_rc;</span><br><span class="line">        <span class="keyword">if</span> (bits.has_sidetable_rc) &#123;</span><br><span class="line">            rc += sidetable_getExtraRC_nolock();</span><br><span class="line">        &#125;</span><br><span class="line">        sidetable_unlock();</span><br><span class="line">        <span class="keyword">return</span> rc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sidetable_unlock();</span><br><span class="line">    <span class="keyword">return</span> sidetable_retainCount();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// raw pointer 从SideTable获取</span></span><br><span class="line"><span class="keyword">uintptr_t</span></span><br><span class="line">objc_object::sidetable_retainCount()</span><br><span class="line">&#123;</span><br><span class="line">    SideTable&amp; table = SideTables()[<span class="keyword">this</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">size_t</span> refcnt_result = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    table.lock();</span><br><span class="line">    RefcountMap::iterator it = table.refcnts.find(<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">if</span> (it != table.refcnts.end()) &#123;</span><br><span class="line">        <span class="comment">// this is valid for SIDE_TABLE_RC_PINNED too</span></span><br><span class="line">        refcnt_result += it-&gt;second &gt;&gt; SIDE_TABLE_RC_SHIFT;</span><br><span class="line">    &#125;</span><br><span class="line">    table.unlock();</span><br><span class="line">    <span class="keyword">return</span> refcnt_result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// non pointer从isa和sideTable获取</span></span><br><span class="line"><span class="keyword">size_t</span> </span><br><span class="line">objc_object::sidetable_getExtraRC_nolock()</span><br><span class="line">&#123;</span><br><span class="line">    assert(isa.nonpointer);</span><br><span class="line">    SideTable&amp; table = SideTables()[<span class="keyword">this</span>];</span><br><span class="line">    RefcountMap::iterator it = table.refcnts.find(<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">if</span> (it == table.refcnts.end()) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> it-&gt;second &gt;&gt; SIDE_TABLE_RC_SHIFT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先<code>SideTables()[this]</code>会获取到一个SideTable.</p>
+<p>然后通过find查找RefCountMap中真正存放引用计数的遍历器,如果查找到会返回一个遍历器,取第二个值并且右移得到实际的值.内存操作的增减基本也都类似,这里就不贴上来了.</p>
+<p>然后通过对象的销毁函数理解<code>weak_table_t</code>的作用:</p>
+<p>对象的销毁首先都会来到<code>objc_destructInstance</code>方法,</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">objc_destructInstance</span><span class="params">(id obj)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (obj) &#123;</span><br><span class="line">        <span class="comment">// Read all of the flags at once for performance.</span></span><br><span class="line">        <span class="keyword">bool</span> cxx = obj-&gt;hasCxxDtor();</span><br><span class="line">        <span class="keyword">bool</span> assoc = obj-&gt;hasAssociatedObjects();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// This order is important.</span></span><br><span class="line">        <span class="keyword">if</span> (cxx) object_cxxDestruct(obj);</span><br><span class="line">        <span class="keyword">if</span> (assoc) _object_remove_assocations(obj);</span><br><span class="line">        obj-&gt;clearDeallocating();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里会根据对象有无析构函数,关联对象等情况处理掉成员变量和关联对象以及置空weak表中的指针.</p>
+<p>我们这里重点来看<code>clearDeallocating</code>方法:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">objc_object::clearDeallocating()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (slowpath(!isa.nonpointer)) &#123;</span><br><span class="line">        <span class="comment">// Slow path for raw pointer isa.</span></span><br><span class="line">        sidetable_clearDeallocating();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (slowpath(isa.weakly_referenced  ||  isa.has_sidetable_rc)) &#123;</span><br><span class="line">        <span class="comment">// Slow path for non-pointer isa with weak refs and/or side table data.</span></span><br><span class="line">        clearDeallocating_slow();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    assert(!sidetable_present());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里会根据是否是raw pointer分别调用<code>sidetable_clearDeallocating</code>和<code>clearDeallocating_slow</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> </span><br><span class="line">objc_object::sidetable_clearDeallocating()</span><br><span class="line">&#123;</span><br><span class="line">    SideTable&amp; table = SideTables()[<span class="keyword">this</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// clear any weak table items</span></span><br><span class="line">    <span class="comment">// clear extra retain count and deallocating bit</span></span><br><span class="line">    <span class="comment">// (fixme warn or abort if extra retain count == 0 ?)</span></span><br><span class="line">    table.lock();</span><br><span class="line">    RefcountMap::iterator it = table.refcnts.find(<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">if</span> (it != table.refcnts.end()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (it-&gt;second &amp; SIDE_TABLE_WEAKLY_REFERENCED) &#123;</span><br><span class="line">            weak_clear_no_lock(&amp;table.weak_table, (id)<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        table.refcnts.erase(it);</span><br><span class="line">    &#125;</span><br><span class="line">    table.unlock();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Slow path of clearDeallocating() </span></span><br><span class="line"><span class="comment">// for objects with nonpointer isa</span></span><br><span class="line"><span class="comment">// that were ever weakly referenced </span></span><br><span class="line"><span class="comment">// or whose retain count ever overflowed to the side table.</span></span><br><span class="line">NEVER_INLINE <span class="keyword">void</span></span><br><span class="line">objc_object::clearDeallocating_slow()</span><br><span class="line">&#123;</span><br><span class="line">    assert(isa.nonpointer  &amp;&amp;  (isa.weakly_referenced || isa.has_sidetable_rc));</span><br><span class="line"></span><br><span class="line">    SideTable&amp; table = SideTables()[<span class="keyword">this</span>];</span><br><span class="line">    table.lock();</span><br><span class="line">    <span class="keyword">if</span> (isa.weakly_referenced) &#123;</span><br><span class="line">        weak_clear_no_lock(&amp;table.weak_table, (id)<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (isa.has_sidetable_rc) &#123;</span><br><span class="line">        table.refcnts.erase(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    table.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>raw poinster 和 non pointer处理方法的区别在于,raw pointer会直接去sidetable中找到weak表进行处理,而 non pointer会根据isa指针中的情况进行weak 表操作以及sidetable中refcnt结构的擦除操作.但是两者最终的weak操作函数都是<code>weak_clear_no_lock</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> * Called by dealloc; nils out all weak pointers that point to the </span></span><br><span class="line"><span class="comment"> * provided object so that they can no longer be used.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * @param weak_table </span></span><br><span class="line"><span class="comment"> * @param referent The object being deallocated. </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">void</span> </span><br><span class="line">weak_clear_no_lock(<span class="keyword">weak_table_t</span> *weak_table, id referent_id) </span><br><span class="line">&#123;</span><br><span class="line">    objc_object *referent = (objc_object *)referent_id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">weak_entry_t</span> *entry = weak_entry_for_referent(weak_table, referent);</span><br><span class="line">    <span class="keyword">if</span> (entry == nil) &#123;</span><br><span class="line">        <span class="comment">/// XXX shouldn't happen, but does with mismatched CF/objc</span></span><br><span class="line">        <span class="comment">//printf("XXX no entry for clear deallocating %p\n", referent);</span></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// zero out references</span></span><br><span class="line">    <span class="keyword">weak_referrer_t</span> *referrers;</span><br><span class="line">    <span class="keyword">size_t</span> count;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (entry-&gt;out_of_line()) &#123;</span><br><span class="line">        referrers = entry-&gt;referrers;</span><br><span class="line">        count = TABLE_SIZE(entry);</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        referrers = entry-&gt;inline_referrers;</span><br><span class="line">        count = WEAK_INLINE_COUNT;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; count; ++i) &#123;</span><br><span class="line">        objc_object **referrer = referrers[i];</span><br><span class="line">        <span class="keyword">if</span> (referrer) &#123;</span><br><span class="line">            <span class="keyword">if</span> (*referrer == referent) &#123;</span><br><span class="line">                *referrer = nil;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (*referrer) &#123;</span><br><span class="line">                _objc_inform(<span class="string">"__weak variable at %p holds %p instead of %p. "</span></span><br><span class="line">                             <span class="string">"This is probably incorrect use of "</span></span><br><span class="line">                             <span class="string">"objc_storeWeak() and objc_loadWeak(). "</span></span><br><span class="line">                             <span class="string">"Break on objc_weak_error to debug.\n"</span>, </span><br><span class="line">                             referrer, (<span class="keyword">void</span>*)*referrer, (<span class="keyword">void</span>*)referent);</span><br><span class="line">                objc_weak_error();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    weak_entry_remove(weak_table, entry);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里会根据是否有weak表实体进行是否删除,以及根据<code>weak_entry_t</code>内的<code>out_of_line</code>参数决定从<code>inline_referrers</code>或者动态数组里面得到weak指针并进行置空,最后从表中删除掉实体.</p>
+<p><strong>总结</strong>:raw pointer 的弱引用,引用计数等都存储在SideTable中,而 non pointer 的引用计数根据情况分为isa内部和内外之和两种,而weak表则存放在SideTable中.</p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Tagged-Pointer"><span class="toc-number">1.</span> <span class="toc-text">Tagged Pointer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#引用计数存储"><span class="toc-number">2.</span> <span class="toc-text">引用计数存储</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/08/22/iOS-内存管理/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/08/22/iOS-内存管理/&text=iOS-内存管理"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/08/22/iOS-内存管理/&is_video=false&description=iOS-内存管理"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS-内存管理&body=Check out this article: http://yoursite.com/2018/08/22/iOS-内存管理/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/08/22/iOS-内存管理/&title=iOS-内存管理"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/08/22/iOS-内存管理/&name=iOS-内存管理&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Yeason Chen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
