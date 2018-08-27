@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="C语言中的宏有两种,一种是对象宏 另一种是 函数宏 对象宏对象宏通常用于定义一个常量,通过宏就可以拿到这个常量. 12// 定义了一个PI常量,后续需要使用时直接使用PI即可#define PI 3.1415926 注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级 1234#define MARGIN 10 + 20MARGIN * 2此时会被替换成: 10 + 20 * 2 显然这不是">
+<meta name="keywords" content="计算机基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="宏进阶">
+<meta property="og:url" content="http://yoursite.com/2017/05/08/宏进阶/index.html">
+<meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="C语言中的宏有两种,一种是对象宏 另一种是 函数宏 对象宏对象宏通常用于定义一个常量,通过宏就可以拿到这个常量. 12// 定义了一个PI常量,后续需要使用时直接使用PI即可#define PI 3.1415926 注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级 1234#define MARGIN 10 + 20MARGIN * 2此时会被替换成: 10 + 20 * 2 显然这不是">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-27T09:31:38.788Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="宏进阶">
+<meta name="twitter:description" content="C语言中的宏有两种,一种是对象宏 另一种是 函数宏 对象宏对象宏通常用于定义一个常量,通过宏就可以拿到这个常量. 12// 定义了一个PI常量,后续需要使用时直接使用PI即可#define PI 3.1415926 注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级 1234#define MARGIN 10 + 20MARGIN * 2此时会被替换成: 10 + 20 * 2 显然这不是">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>宏进阶</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2017/06/10/程序链接/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2017/03/27/位运算总结/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/05/08/宏进阶/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/05/08/宏进阶/&text=宏进阶"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/05/08/宏进阶/&is_video=false&description=宏进阶"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=宏进阶&body=Check out this article: http://yoursite.com/2017/05/08/宏进阶/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/05/08/宏进阶/&name=宏进阶&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#对象宏"><span class="toc-number">1.</span> <span class="toc-text">对象宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数宏"><span class="toc-number">2.</span> <span class="toc-text">函数宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#宏定义中特殊的用法"><span class="toc-number">3.</span> <span class="toc-text">宏定义中特殊的用法</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        宏进阶
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Yeason's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2017-05-08T07:18:57.000Z" itemprop="datePublished">2017-05-08</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/计算机基础/">计算机基础</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>C语言中的宏有两种,一种是<code>对象宏</code> 另一种是 <code>函数宏</code></p>
+<h4 id="对象宏"><a href="#对象宏" class="headerlink" title="对象宏"></a>对象宏</h4><p><code>对象宏</code>通常用于定义一个常量,通过宏就可以拿到这个常量.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义了一个PI常量,后续需要使用时直接使用PI即可</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PI 3.1415926</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意: 编译器在展开宏时,会直接展开,需要注意运算的优先级</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MARGIN 10 + 20</span></span><br><span class="line">MARGIN * <span class="number">2</span></span><br><span class="line"></span><br><span class="line">此时会被替换成: <span class="number">10</span> + <span class="number">20</span> * <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>显然这不是我们想要的结果,因此需要在宏定义宏添加括号保证执行顺序,需要改为:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MARGIN (10 + 20)</span></span><br></pre></td></tr></table></figure>
+<h4 id="函数宏"><a href="#函数宏" class="headerlink" title="函数宏"></a>函数宏</h4><p><code>函数宏</code>类似于一个函数,它可以传递参数,通过参数进行一系列的操作.在宏定义的后面加上括号,并在其中加入参数,编译器就会展开并按进行替换.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MARGIN(A, B) (A + B)</span></span><br></pre></td></tr></table></figure>
+<h4 id="宏定义中特殊的用法"><a href="#宏定义中特殊的用法" class="headerlink" title="宏定义中特殊的用法"></a>宏定义中特殊的用法</h4><ol>
+<li><p><code>#</code></p>
+<p>将宏定义中的传入参数名转换成用一对双引号括起来参数名字符串.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> string(name) printf(<span class="meta-string">"%s"</span>, #name);</span></span><br><span class="line"><span class="built_in">string</span>(abc);</span><br><span class="line"></span><br><span class="line">会转换成: <span class="string">"abc"</span></span><br></pre></td></tr></table></figure>
+<p>注意:</p>
+<pre><code>a. 传入的参数前后空格将会被忽略.
+
+    如: `string(   abc  );` 将会被展开为: `&quot;abc&quot;;`
+
+b. 传入的参数内部有多个空格,会被合并为一个空格.
+
+    如: `string(abc     def);` 将会被展开为: `&quot;abc edf&quot;;`
+</code></pre></li>
+<li><p><code>##</code></p>
+<p>合并传入的参数.(常用于合并成实际参数名)</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RealName(n) Name##n</span></span><br><span class="line">RealName(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">会转换成: Name3</span><br></pre></td></tr></table></figure>
+<p>注意:</p>
+<pre><code>a. 用`##`连接形参时,`##`前后的空格可有可无.
+
+如: `#define RealName(n) Name##n`与`#define RealName(n) Name ## n`没有区别.
+</code></pre><p>   b. 如果<code>##</code>用在<code>,</code>和参数之间,且参数留空的话,<code>,</code>会删除掉,防止编译错误.</p>
+<p>   c. <strong>如果用到<code>#</code> 或<code>##</code>的宏,其参数也是宏的话,参数宏不会被展开.</strong></p>
+</li>
+<li><p><code>__VA_ARGS_</code></p>
+<p>多参数宏,与<code>...</code>配合使用.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 可传入多个参数,如果没有参数 ## 会被最后的&apos;,&apos;去掉</span><br><span class="line">#define MYLog(fmt, ...) NSLog((fmt), ##__VA_ARGS__);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#对象宏"><span class="toc-number">1.</span> <span class="toc-text">对象宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数宏"><span class="toc-number">2.</span> <span class="toc-text">函数宏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#宏定义中特殊的用法"><span class="toc-number">3.</span> <span class="toc-text">宏定义中特殊的用法</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/05/08/宏进阶/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/05/08/宏进阶/&text=宏进阶"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/05/08/宏进阶/&is_video=false&description=宏进阶"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=宏进阶&body=Check out this article: http://yoursite.com/2017/05/08/宏进阶/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/05/08/宏进阶/&title=宏进阶"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/05/08/宏进阶/&name=宏进阶&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Yeason Chen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+

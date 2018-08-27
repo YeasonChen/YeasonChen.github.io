@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="总体流程图 注册所有在配置中开启了(enable)的Muxer, DeMuxer, Codec等123avformat_network_init();av_register_all(); 打开媒体文件123456789AVFormatContext *formatCtx = avformat_alloc_context();// 添加阻塞回调AVIOInterruptCB int_cb = &amp;#1">
+<meta name="keywords" content="FFmpeg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FFmpeg-03 从解码开始了解使用流程">
+<meta property="og:url" content="http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/index.html">
+<meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="总体流程图 注册所有在配置中开启了(enable)的Muxer, DeMuxer, Codec等123avformat_network_init();av_register_all(); 打开媒体文件123456789AVFormatContext *formatCtx = avformat_alloc_context();// 添加阻塞回调AVIOInterruptCB int_cb = &amp;#1">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/20140827132120380.jpeg">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/%E7%BC%96%E7%A0%81.jpg">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/%E8%A7%A3%E7%A0%81.jpg">
+<meta property="og:updated_time" content="2018-08-27T09:30:11.572Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FFmpeg-03 从解码开始了解使用流程">
+<meta name="twitter:description" content="总体流程图 注册所有在配置中开启了(enable)的Muxer, DeMuxer, Codec等123avformat_network_init();av_register_all(); 打开媒体文件123456789AVFormatContext *formatCtx = avformat_alloc_context();// 添加阻塞回调AVIOInterruptCB int_cb = &amp;#1">
+<meta name="twitter:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/20140827132120380.jpeg">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>FFmpeg-03 从解码开始了解使用流程</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/08/15/Grammar-01-英语体系-词性和成分/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/03/10/FFmpeg-02-关键结构体分析/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&text=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&is_video=false&description=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=FFmpeg-03 从解码开始了解使用流程&body=Check out this article: http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&name=FFmpeg-03 从解码开始了解使用流程&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#总体流程图"><span class="toc-number">1.</span> <span class="toc-text">总体流程图</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#注册所有在配置中开启了-enable-的Muxer-DeMuxer-Codec等"><span class="toc-number">1.1.</span> <span class="toc-text">注册所有在配置中开启了(enable)的Muxer, DeMuxer, Codec等</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#打开媒体文件"><span class="toc-number">1.2.</span> <span class="toc-text">打开媒体文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#存储数据"><span class="toc-number">1.3.</span> <span class="toc-text">存储数据</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#解码数据"><span class="toc-number">1.4.</span> <span class="toc-text">解码数据</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        FFmpeg-03 从解码开始了解使用流程
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Yeason's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2018-03-13T07:33:29.000Z" itemprop="datePublished">2018-03-13</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/FFmpeg/">FFmpeg</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h4 id="总体流程图"><a href="#总体流程图" class="headerlink" title="总体流程图"></a>总体流程图</h4><p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/20140827132120380.jpeg" alt="解码流程"></p>
+<h5 id="注册所有在配置中开启了-enable-的Muxer-DeMuxer-Codec等"><a href="#注册所有在配置中开启了-enable-的Muxer-DeMuxer-Codec等" class="headerlink" title="注册所有在配置中开启了(enable)的Muxer, DeMuxer, Codec等"></a>注册所有在配置中开启了(enable)的Muxer, DeMuxer, Codec等</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">avformat_network_init();</span><br><span class="line"></span><br><span class="line">av_register_all();</span><br></pre></td></tr></table></figure>
+<h5 id="打开媒体文件"><a href="#打开媒体文件" class="headerlink" title="打开媒体文件"></a>打开媒体文件</h5><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">AVFormatContext *formatCtx = avformat_alloc_context();</span><br><span class="line"><span class="comment">// 添加阻塞回调</span></span><br><span class="line">AVIOInterruptCB int_cb = &#123;interrupt_callback, (__bridge <span class="keyword">void</span> *)(self)&#125;;</span><br><span class="line">formatCtx-&gt;interrupt_callback = int_cb;</span><br><span class="line"><span class="comment">// 根据地址类型的不同,加载相应的文件到 formatCtx中,包含有各种流</span></span><br><span class="line"><span class="comment">// 后面两个参数表示需要加载的文件类型,都传入NULL则FFmpeg会自行判断文件类型</span></span><br><span class="line">avformat_open_input(&amp;formatCtx, path, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line"><span class="comment">// 查找 formatCtx中的流信息</span></span><br><span class="line">avformat_find_stream_info(formatCtx, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+<p><code>avformat_open_input</code>会填充<code>AVFormatContext</code>结构体.</p>
+<p><code>avformat_find_stream_info</code>会填充<code>pFormatCtx-&gt;streams</code>对应的信息.</p>
+<p>此时.可以使用<code>av_dump_format(pFormatCtx, 0, argv[1], 0);</code>查看<code>AVFormatContext</code>中的信息.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 找到流中的解码器并且打开它</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; formatCtx-&gt;nb_streams; i++) &#123;</span><br><span class="line">	AVStream* stream = formatCtx-&gt;streams[i];    </span><br><span class="line">	<span class="keyword">if</span>(AVMEDIA_TYPE_VIDEO == stream-&gt;codec-&gt;codec_type) &#123;        </span><br><span class="line">		<span class="comment">// 视频流        </span></span><br><span class="line">		videoStreamIndex = i;    </span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span>(AVMEDIA_TYPE_AUDIO == stream-&gt;codec-&gt;codec_type )&#123;        </span><br><span class="line">		<span class="comment">// 音频流        </span></span><br><span class="line">		audioStreamIndex = i;   </span><br><span class="line"> 	&#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">// 打开音频流解码器,视频解码器同理：(流中包含有 codecContext编码信息, codecCondext中包含有codec_id编码器id,通过id可以找到解码器,然后打开解码器)</span></span><br><span class="line"> AVCodecContext * audioCodecCtx = audioStream-&gt;codec;</span><br><span class="line"> AVCodec *codec = avcodec_find_decoder(audioCodecCtx -&gt;codec_id);</span><br><span class="line"> <span class="keyword">if</span>(!codec)&#123;    <span class="comment">// 找不到对应的音频解码器&#125;</span></span><br><span class="line"> <span class="keyword">int</span> openCodecErrCode = <span class="number">0</span>;</span><br><span class="line"> <span class="keyword">if</span> ((openCodecErrCode = avcodec_open2(codecCtx, codec, <span class="literal">NULL</span>)) &lt; <span class="number">0</span>)&#123;    <span class="comment">// 打开音频解码器失败&#125;</span></span><br></pre></td></tr></table></figure>
+<h5 id="存储数据"><a href="#存储数据" class="headerlink" title="存储数据"></a>存储数据</h5><p>首先我们需要一个内存空间用于存储我们需要输出的数据.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> pictureValid = avpicture_alloc(&amp;picture, PIX_FMT_YUV420P, videoCodecCtx-&gt;width, videoCodecCtx-&gt;height) == <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (!pictureValid)&#123;    <span class="comment">// 分配失败</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Picture not valid.\n"</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>接着我们需要分配处理后的帧数据结构.AVFrame</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AVFrame *pFrame, *pFrameYUV;</span><br><span class="line">pFrame=av_frame_alloc();</span><br><span class="line">pFrameYUV=av_frame_alloc();</span><br></pre></td></tr></table></figure>
+<h5 id="解码数据"><a href="#解码数据" class="headerlink" title="解码数据"></a>解码数据</h5><p>我们需要格式化输出想要的格式,所以需要经过一次转换.</p>
+<p>首先生成转换的上下文.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SwsContext</span> *<span class="title">img_convert_ctx</span>;</span></span><br><span class="line"><span class="comment">// 参数依次为 原始宽高 原始格式 转换后的宽高 转换后的格式 转换算法 ..  .. </span></span><br><span class="line">img_convert_ctx = sws_getCachedContext(img_convert_ctx, videoCodecCtx-&gt;width, videoCodecCtx-&gt;height, videoCodecCtx-&gt;pix_fmt, videoCodecCtx-&gt;width, videoCodecCtx-&gt;height, PIX_FMT_YUV420P, SWS_FAST_BILINEAR,<span class="literal">NULL</span>, <span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+<p>读取数据并解码.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">        av_read_frame(formatCtx, &amp;packet);</span><br><span class="line">        <span class="keyword">if</span>(packet.stream_index == videoStreamIndex) &#123;<span class="comment">// 视频数据</span></span><br><span class="line">            pktSize = packet.size;</span><br><span class="line">            <span class="keyword">while</span> (pktSize &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">int</span> len = avcodec_decode_video2(videoCodecCtx, pFrame,</span><br><span class="line">                                                &amp;gotframe,</span><br><span class="line">                                                &amp;packet);</span><br><span class="line">                <span class="keyword">if</span> (len &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                    NSLog(@<span class="string">"decode video error, skip packet %s"</span>, av_err2str(len));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (len == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (gotframe) &#123;</span><br><span class="line">                    NSLog(@<span class="string">"writing!!"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                pktSize -= len;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        av_free_packet(&amp;packet);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>另附雷神总结的编解码函数大全:</p>
+<p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/%E7%BC%96%E7%A0%81.jpg" alt="编码"></p>
+<p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/FFmpeg/%E8%A7%A3%E7%A0%81.jpg" alt="解码"></p>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#总体流程图"><span class="toc-number">1.</span> <span class="toc-text">总体流程图</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#注册所有在配置中开启了-enable-的Muxer-DeMuxer-Codec等"><span class="toc-number">1.1.</span> <span class="toc-text">注册所有在配置中开启了(enable)的Muxer, DeMuxer, Codec等</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#打开媒体文件"><span class="toc-number">1.2.</span> <span class="toc-text">打开媒体文件</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#存储数据"><span class="toc-number">1.3.</span> <span class="toc-text">存储数据</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#解码数据"><span class="toc-number">1.4.</span> <span class="toc-text">解码数据</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&text=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&is_video=false&description=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=FFmpeg-03 从解码开始了解使用流程&body=Check out this article: http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&title=FFmpeg-03 从解码开始了解使用流程"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2018/03/13/FFmpeg-03-从解码开始了解使用流程/&name=FFmpeg-03 从解码开始了解使用流程&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Yeason Chen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+

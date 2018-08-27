@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="OC对象的本质是C的结构体NSObject对象占用多大的内存? 123struct NSObject_IMP &amp;#123;	Class isa; // 指针&amp;#125; getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节] malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节]) malloc 系统在分配内存时也会有内存对齐">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS-杂项">
+<meta property="og:url" content="http://yoursite.com/2017/07/12/iOS-杂项/index.html">
+<meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="OC对象的本质是C的结构体NSObject对象占用多大的内存? 123struct NSObject_IMP &amp;#123;	Class isa; // 指针&amp;#125; getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节] malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节]) malloc 系统在分配内存时也会有内存对齐">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1.png">
+<meta property="og:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/lldb%E6%9F%A5%E7%9C%8B%E5%86%85%E5%AD%98.png">
+<meta property="og:updated_time" content="2018-08-27T09:29:02.034Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS-杂项">
+<meta name="twitter:description" content="OC对象的本质是C的结构体NSObject对象占用多大的内存? 123struct NSObject_IMP &amp;#123;	Class isa; // 指针&amp;#125; getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节] malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节]) malloc 系统在分配内存时也会有内存对齐">
+<meta name="twitter:image" content="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>iOS-杂项</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2017/07/12/iOS-Runtime/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2017/06/30/iOS-Block/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/07/12/iOS-杂项/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/07/12/iOS-杂项/&text=iOS-杂项"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/07/12/iOS-杂项/&is_video=false&description=iOS-杂项"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS-杂项&body=Check out this article: http://yoursite.com/2017/07/12/iOS-杂项/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/07/12/iOS-杂项/&name=iOS-杂项&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#OC对象的本质是C的结构体"><span class="toc-number">1.</span> <span class="toc-text">OC对象的本质是C的结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isa指针"><span class="toc-number">2.</span> <span class="toc-text">isa指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KVC"><span class="toc-number">3.</span> <span class="toc-text">KVC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Category"><span class="toc-number">4.</span> <span class="toc-text">Category</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Load-和-Initialize"><span class="toc-number">4.1.</span> <span class="toc-text">Load 和 Initialize</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#关联对象"><span class="toc-number">4.2.</span> <span class="toc-text">关联对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LLDB打印对象内存"><span class="toc-number">4.3.</span> <span class="toc-text">LLDB打印对象内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iOS中的锁"><span class="toc-number">4.4.</span> <span class="toc-text">iOS中的锁</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        iOS-杂项
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Yeason's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2017-07-12T03:13:43.000Z" itemprop="datePublished">2017-07-12</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/iOS/">iOS</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="OC对象的本质是C的结构体"><a href="#OC对象的本质是C的结构体" class="headerlink" title="OC对象的本质是C的结构体"></a>OC对象的本质是C的结构体</h3><p>NSObject对象占用多大的内存?</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">NSObject_IMP</span> &#123;</span></span><br><span class="line">	Class isa; <span class="comment">// 指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>getInstanceSize: 获取实例对象成员变量(内存对齐之后)所占用的大小[8字节]</p>
+<p>malloc_size: 获取指针所指向内存的大小(这个是真正分配的内存大小[16字节])</p>
+<p>malloc 系统在分配内存时也会有内存对齐,(16 32 48 128等),所以有些结构体需要24字节的内存,系统会分配32个字节</p>
+<p><code>class</code>方法返回的一直都是类对象,(实例对象或类名调用都是返回类对象)<br>获取元类对象:<br><code>object_getclass()</code>传入类对象会返回元类对象,传入实例会返回类对象(这里返回的是传入对象的<code>isa</code>)<br><code>objc_getClass()</code>传入字符串,返回类对象</p>
+<p><code>class_isMetaClass()</code>传入类对象,判断是否是元类对象</p>
+<h3 id="isa指针"><a href="#isa指针" class="headerlink" title="isa指针"></a>isa指针</h3><p>NSObject的元类对象的supperclass指向NSObject类对象,而OC中发消息其实是不区分方法是加号开头还是减号开头,只要有对应方法就会调用.<br>所以如果给一个类对象发没有实现的消息,而且NSObject中有相应的对象方法,会调用到该对象方法.</p>
+<p>isa指针: 并没有直接指向类对象或元类对象,需要进行一次运算才能得到类对象或元类对象的地址</p>
+<p>###KVO(是同步执行的,不要在线程间使用kvo技术)<br>kvo的触发是在<code>didChangeValueForKey:(NSString *)key</code>中实现的,该方法会判断是否调用<code>willChangeValueForKey:(NSString *)key</code>,有调用才会触发kvo.</p>
+<p>被监听的实例对象会动态产生一个子类(KVONotifi_Name),并修改实例isa指向新的类,然后实例调用方法的时候会调用到KVONotifi_Name的修改过的set方法, KVONotifi_Name的isa指向自己的元类.</p>
+<p>KVO实现的时候会调用内部的<code>willChangeValueForKey:(NSString *)key</code> 和 <code>didChangeValueForKey:(NSString *)key</code><br>如果想要在设置的值满足一定条件的时候触发KVO可以设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// 禁止系统的自动调用</span><br><span class="line">+ (BOOL)automaticallyNotifiesObserversOfName &#123;</span><br><span class="line">    return NO;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 手动调用这两个方法(缺一不可)则会触发KVO</span><br><span class="line">- (void)setName:(NSString *)name &#123;</span><br><span class="line">    if ([name  isEqual: @&quot;yea&quot;]) &#123;</span><br><span class="line">        [self willChangeValueForKey:@&quot;name&quot;];</span><br><span class="line">        _name = name;</span><br><span class="line">        [self didChangeValueForKey:@&quot;name&quot;];</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        _name = name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="KVC"><a href="#KVC" class="headerlink" title="KVC"></a>KVC</h3><p>会先去找setName 和 _setName方法,没有的话会判断是否允许直接访问成员变量,不允许直接报错,允许的话会去找成员变量设置.</p>
+<p>_Key,  </p>
+<p>_isKey ,key, isKey这几个成员变量去设置,没有还是会报错.</p>
+<p>KVC即使没有set方法,也会内部调用手动触发KVO</p>
+<h3 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">category_t</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">classref_t</span> cls;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">method_list_t</span> *<span class="title">instanceMethods</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">method_list_t</span> *<span class="title">classMethods</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">protocol_list_t</span> *<span class="title">protocols</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">property_list_t</span> *<span class="title">instanceProperties</span>;</span></span><br><span class="line">    <span class="comment">// Fields below this point are not always present on disk.</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">property_list_t</span> *_<span class="title">classProperties</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">method_list_t</span> *methodsForMeta(<span class="keyword">bool</span> isMeta) &#123;</span><br><span class="line">        <span class="keyword">if</span> (isMeta) <span class="keyword">return</span> classMethods;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">return</span> instanceMethods;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">property_list_t</span> *propertiesForMeta(<span class="keyword">bool</span> isMeta, struct header_info *hi);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>每个分类都会变成category_t类型的结构体,结构体中包含了有分类的实例方法列表,对象方法列表,属性列表,协议列表,然后runtime会把相应的列表合并到原来的类中,根据源码合并的方法,</p>
+<p><strong>[[后编译分类的方法列表], [先编译分类的方法列表], [原来类的方法列表]]</strong></p>
+<p>会把分类的方法放在前面,且最后编译的分类会在最前面,所以方法调用的时候,会优先调用后面编译的分类,最后才是原来的类方法.(分类后编译先调用)</p>
+<p>分类里面不能添加实例变量,因为类对象中的实例变量所在结构体只读.编译之后就不可以添加.</p>
+<h4 id="Load-和-Initialize"><a href="#Load-和-Initialize" class="headerlink" title="Load 和 Initialize"></a>Load 和 Initialize</h4><p> <strong>load</strong></p>
+<p>每个分类中都可以添加load方法,且类跟分类中的load方法都会被调用.</p>
+<p>runtime加载类和分类进内存的时候调用load方法.</p>
+<p> 在合并之后的类中,也会有很多个load方法,但是这里的调用是直接找到对应的方法实现(原来类的load方法, 分类一的load方法, 分类二的load方法)然后调用.因此可以准确的调用load方法.(跟一般的通过isa指针发消息的机制不一样).</p>
+<p> load的调用顺序:(先编译先调用)</p>
+<p>根据编译顺序先编译的先调用,在调用一个类的Load方法时,会先递归的调用父类的load方法,然后才会调用分类的load方法.</p>
+<p> 因此最后的调用顺序为:<br> <strong>(先编译的类的父类)&gt;(先编译的类)&gt;(后编译的类的父类)&gt;(后编译的类)&gt;(先编译的分类load)&gt;(后编译的分类Load)</strong></p>
+<p><strong>Initialize</strong> </p>
+<p>第一次接受消息时调用(消息发送机制,会优先调用分类的方法).<br> <code>Initialize</code>方法在调用的时候内部会调用父类的<code>Initialize</code>方法.</p>
+<p> 所以父类的<code>Initialize</code>方法可能会被调用多次.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Person 有Initialize 方法</span></span><br><span class="line"><span class="comment">// Student继承至Person,且没有Initialize 方法</span></span><br><span class="line"><span class="comment">// Teacher继承至Person,且没有Initialize 方法</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 三个发消息后,Person`Initialize `方法会调用三次,但并不是Person初始化三次,而是各自初始化一次,Student和Teacher也初始化了,只是调用了Person的方法而已</span></span><br></pre></td></tr></table></figure>
+<h4 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h4><p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1.png" alt=""></p>
+<p>流程: 首先通过Manager得到全局的HashMap,然后通过对象地址得到该对象的关联对象表,然后按key得到不同的值.通过源码加深理解:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> _object_set_associative_reference(id object, <span class="keyword">void</span> *key, id value, <span class="keyword">uintptr_t</span> policy) &#123;</span><br><span class="line">    <span class="comment">// retain the new value (if any) outside the lock.</span></span><br><span class="line">    <span class="function">ObjcAssociation <span class="title">old_association</span><span class="params">(<span class="number">0</span>, nil)</span></span>;</span><br><span class="line">    id new_value = value ? acquireValue(value, policy) : nil;</span><br><span class="line">    &#123;</span><br><span class="line">        AssociationsManager manager;</span><br><span class="line">        AssociationsHashMap &amp;associations(manager.associations());</span><br><span class="line">        <span class="keyword">disguised_ptr_t</span> disguised_object = DISGUISE(object);</span><br><span class="line">        <span class="keyword">if</span> (new_value) &#123;</span><br><span class="line">            <span class="comment">// break any existing association.</span></span><br><span class="line">            AssociationsHashMap::iterator i = associations.find(disguised_object);</span><br><span class="line">            <span class="keyword">if</span> (i != associations.end()) &#123;</span><br><span class="line">                <span class="comment">// secondary table exists</span></span><br><span class="line">                ObjectAssociationMap *refs = i-&gt;second;</span><br><span class="line">                ObjectAssociationMap::iterator j = refs-&gt;find(key);</span><br><span class="line">                <span class="keyword">if</span> (j != refs-&gt;end()) &#123;</span><br><span class="line">                    old_association = j-&gt;second;</span><br><span class="line">                    j-&gt;second = ObjcAssociation(policy, new_value);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    (*refs)[key] = ObjcAssociation(policy, new_value);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// create the new association (first time).</span></span><br><span class="line">                ObjectAssociationMap *refs = <span class="keyword">new</span> ObjectAssociationMap;</span><br><span class="line">                associations[disguised_object] = refs;</span><br><span class="line">                (*refs)[key] = ObjcAssociation(policy, new_value);</span><br><span class="line">                object-&gt;setHasAssociatedObjects();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// setting the association to nil breaks the association.</span></span><br><span class="line">            AssociationsHashMap::iterator i = associations.find(disguised_object);</span><br><span class="line">            <span class="keyword">if</span> (i !=  associations.end()) &#123;</span><br><span class="line">                ObjectAssociationMap *refs = i-&gt;second;</span><br><span class="line">                ObjectAssociationMap::iterator j = refs-&gt;find(key);</span><br><span class="line">                <span class="keyword">if</span> (j != refs-&gt;end()) &#123;</span><br><span class="line">                    old_association = j-&gt;second;</span><br><span class="line">                    refs-&gt;erase(j);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// release the old value (outside of the lock).</span></span><br><span class="line">    <span class="keyword">if</span> (old_association.hasValue()) ReleaseValue()(old_association);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>顺手看一下对象释放时调用的释放关联对象的方法:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> _object_remove_assocations(id object) &#123;</span><br><span class="line">    <span class="built_in">vector</span>&lt; ObjcAssociation,ObjcAllocator&lt;ObjcAssociation&gt; &gt; elements;</span><br><span class="line">    &#123;</span><br><span class="line">        AssociationsManager manager;</span><br><span class="line">        AssociationsHashMap &amp;associations(manager.associations());</span><br><span class="line">        <span class="keyword">if</span> (associations.size() == <span class="number">0</span>) <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">disguised_ptr_t</span> disguised_object = DISGUISE(object);</span><br><span class="line">        AssociationsHashMap::iterator i = associations.find(disguised_object);</span><br><span class="line">        <span class="keyword">if</span> (i != associations.end()) &#123;</span><br><span class="line">            <span class="comment">// copy all of the associations that need to be removed.</span></span><br><span class="line">            ObjectAssociationMap *refs = i-&gt;second;</span><br><span class="line">            <span class="keyword">for</span> (ObjectAssociationMap::iterator j = refs-&gt;begin(), end = refs-&gt;end(); j != end; ++j) &#123;</span><br><span class="line">                elements.push_back(j-&gt;second);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// remove the secondary table.</span></span><br><span class="line">            <span class="keyword">delete</span> refs;</span><br><span class="line">            associations.erase(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// the calls to releaseValue() happen outside of the lock.</span></span><br><span class="line">    for_each(elements.begin(), elements.end(), ReleaseValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="LLDB打印对象内存"><a href="#LLDB打印对象内存" class="headerlink" title="LLDB打印对象内存"></a>LLDB打印对象内存</h4><p><img src="https://yeason-blog.oss-cn-shenzhen.aliyuncs.com/Runtime/lldb%E6%9F%A5%E7%9C%8B%E5%86%85%E5%AD%98.png" alt=""></p>
+<h4 id="iOS中的锁"><a href="#iOS中的锁" class="headerlink" title="iOS中的锁"></a>iOS中的锁</h4><p><strong>OSSpinLock(自旋锁)</strong>: 等待锁的线程会处于忙等状态,适用于等待时间较短的情况,这样可以避免线程的挂起,性能较高.</p>
+<p>现在有优先级反转的问题: 当较低优先级的线程加锁之后,CPU又调度到较高优先级的线程,此时高优先级线程会一直忙等,然后较低优先级的线程又一直不会被分配CPU执行任务以解除锁,会消耗很大的性能.</p>
+<p><strong>os_unfair_lock</strong>: 用于替代OSSpinLock的方案,但是是个互斥锁.</p>
+<p><strong>pthread_mutex</strong>: </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pthread_mutex_t</span> mutex;</span><br><span class="line"><span class="keyword">pthread_mutexattr_t</span> attr;</span><br><span class="line"><span class="comment">// 初始化属性</span></span><br><span class="line">pthread_mutexattr_init(&amp;attr);</span><br><span class="line"><span class="comment">// 这里属性设置为NULL则为DEFAULT属性</span></span><br><span class="line"><span class="comment">// 递归锁: 在当前线程中可以重复加锁(PTHREAD_MUTEX_RECURSIVE)</span></span><br><span class="line">pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_DEFAULT);</span><br><span class="line">pthread_mutex_init(&amp;mutex, &amp;attr);</span><br><span class="line">pthread_mutexattr_destroy(&amp;attr);</span><br><span class="line">pthread_mutex_destroy(&amp;mutex);</span><br></pre></td></tr></table></figure>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#OC对象的本质是C的结构体"><span class="toc-number">1.</span> <span class="toc-text">OC对象的本质是C的结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#isa指针"><span class="toc-number">2.</span> <span class="toc-text">isa指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#KVC"><span class="toc-number">3.</span> <span class="toc-text">KVC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Category"><span class="toc-number">4.</span> <span class="toc-text">Category</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Load-和-Initialize"><span class="toc-number">4.1.</span> <span class="toc-text">Load 和 Initialize</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#关联对象"><span class="toc-number">4.2.</span> <span class="toc-text">关联对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LLDB打印对象内存"><span class="toc-number">4.3.</span> <span class="toc-text">LLDB打印对象内存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iOS中的锁"><span class="toc-number">4.4.</span> <span class="toc-text">iOS中的锁</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/07/12/iOS-杂项/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/07/12/iOS-杂项/&text=iOS-杂项"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/07/12/iOS-杂项/&is_video=false&description=iOS-杂项"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=iOS-杂项&body=Check out this article: http://yoursite.com/2017/07/12/iOS-杂项/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/07/12/iOS-杂项/&title=iOS-杂项"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/07/12/iOS-杂项/&name=iOS-杂项&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Yeason Chen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+

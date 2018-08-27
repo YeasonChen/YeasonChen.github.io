@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="相关基础1.与运算与运算符&amp;amp;是双目运算符。只有对应的两个二进位均为 1 时,结果才为 1 ,否则为0。例如: 123410 &amp;amp; 3 = 00001010       &amp;amp; 00000011       = 00000010       = 2 2.或运算或运算符|是双目运算符。只要对应的两个二进位有一个为 1 ,结果就为 1 。例如: 123410 | 3 = 0000101">
+<meta name="keywords" content="计算机基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="位运算总结">
+<meta property="og:url" content="http://yoursite.com/2017/03/27/位运算总结/index.html">
+<meta property="og:site_name" content="Yeason&#39;s blog">
+<meta property="og:description" content="相关基础1.与运算与运算符&amp;amp;是双目运算符。只有对应的两个二进位均为 1 时,结果才为 1 ,否则为0。例如: 123410 &amp;amp; 3 = 00001010       &amp;amp; 00000011       = 00000010       = 2 2.或运算或运算符|是双目运算符。只要对应的两个二进位有一个为 1 ,结果就为 1 。例如: 123410 | 3 = 0000101">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-27T09:31:16.131Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="位运算总结">
+<meta name="twitter:description" content="相关基础1.与运算与运算符&amp;amp;是双目运算符。只有对应的两个二进位均为 1 时,结果才为 1 ,否则为0。例如: 123410 &amp;amp; 3 = 00001010       &amp;amp; 00000011       = 00000010       = 2 2.或运算或运算符|是双目运算符。只要对应的两个二进位有一个为 1 ,结果就为 1 。例如: 123410 | 3 = 0000101">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>位运算总结</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- rss -->
+    
+    
+</head>
+
+<body>
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fa fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2017/05/08/宏进阶/"><i class="fa fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2017/03/11/Hexo使用/"><i class="fa fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fa fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/03/27/位运算总结/"><i class="fa fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/03/27/位运算总结/&text=位运算总结"><i class="fa fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/03/27/位运算总结/&is_video=false&description=位运算总结"><i class="fa fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=位运算总结&body=Check out this article: http://yoursite.com/2017/03/27/位运算总结/"><i class="fa fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/03/27/位运算总结/&name=位运算总结&description="><i class="fa fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#相关基础"><span class="toc-number">1.</span> <span class="toc-text">相关基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-与运算"><span class="toc-number">1.1.</span> <span class="toc-text">1.与运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-或运算"><span class="toc-number">1.2.</span> <span class="toc-text">2.或运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-非运算"><span class="toc-number">1.3.</span> <span class="toc-text">3.非运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-异或运算"><span class="toc-number">1.4.</span> <span class="toc-text">4.异或运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-左移和右移"><span class="toc-number">1.5.</span> <span class="toc-text">5. 左移和右移</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#经典应用"><span class="toc-number">2.</span> <span class="toc-text">经典应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-i-i-1"><span class="toc-number">2.1.</span> <span class="toc-text">1. i+(~i)=-1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-计算-n-1-与-n-1"><span class="toc-number">2.2.</span> <span class="toc-text">2. 计算 n+1 与 n-1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-取相反数"><span class="toc-number">2.3.</span> <span class="toc-text">3. 取相反数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-if-x-a-x-b-if-x-b-x-a"><span class="toc-number">2.4.</span> <span class="toc-text">4. if(x == a) x = b; if(x == b) x = a;</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-求二进制中-1-的个数"><span class="toc-number">2.5.</span> <span class="toc-text">5.求二进制中 1 的个数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-判断奇偶性"><span class="toc-number">2.6.</span> <span class="toc-text">6.判断奇偶性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-不用临时变量交换两个数"><span class="toc-number">2.7.</span> <span class="toc-text">7.不用临时变量交换两个数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-取绝对值"><span class="toc-number">2.8.</span> <span class="toc-text">8.取绝对值</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index width mx-auto px2 my4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        位运算总结
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Yeason's blog</span>
+      </span>
+      
+    <div class="postdate">
+        <time datetime="2017-03-27T07:48:18.000Z" itemprop="datePublished">2017-03-27</time>
+    </div>
+
+
+      
+    <div class="article-tag">
+        <i class="fa fa-tag"></i>
+        <a class="tag-link" href="/tags/计算机基础/">计算机基础</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="相关基础"><a href="#相关基础" class="headerlink" title="相关基础"></a>相关基础</h3><h4 id="1-与运算"><a href="#1-与运算" class="headerlink" title="1.与运算"></a>1.与运算</h4><p>与运算符<code>&amp;</code>是双目运算符。只有对应的两个二进位均为 1 时,结果才为 1 ,否则为0。例如:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">10 &amp; 3 = 00001010</span><br><span class="line">       &amp; 00000011</span><br><span class="line">       = 00000010</span><br><span class="line">       = 2</span><br></pre></td></tr></table></figure>
+<h4 id="2-或运算"><a href="#2-或运算" class="headerlink" title="2.或运算"></a>2.或运算</h4><p>或运算符<code>|</code>是双目运算符。只要对应的两个二进位有一个为 1 ,结果就为 1 。例如:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">10 | 3 = 00001010</span><br><span class="line">       | 00000011</span><br><span class="line">       = 00001011</span><br><span class="line">       = 11</span><br></pre></td></tr></table></figure>
+<h4 id="3-非运算"><a href="#3-非运算" class="headerlink" title="3.非运算"></a>3.非运算</h4><p>非运算符 <code>~</code> 为单目运算符。其功能是对参与运算的各二进位求反。例如:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~ 9 = ~ 00001001</span><br><span class="line">    =   11110110</span><br><span class="line">    =   -10</span><br></pre></td></tr></table></figure>
+<h4 id="4-异或运算"><a href="#4-异或运算" class="headerlink" title="4.异或运算"></a>4.异或运算</h4><p>异或运算符<code>^</code>是双目运算符。其功能是对参与运算的二进位相异或,即当两二进位相异时,结果为 1，相同就为 0。例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">9 ^ 5 = 00001001</span><br><span class="line">      ^ 00000101</span><br><span class="line">      = 00001100</span><br><span class="line">      = 12</span><br></pre></td></tr></table></figure>
+<h4 id="5-左移和右移"><a href="#5-左移和右移" class="headerlink" title="5. 左移和右移"></a>5. 左移和右移</h4><p>左移动就是向左移动 k 位，丢弃最高的 k 位，并在右端补 k 个 0，也就是常说的当前值乘以 2 的 k 次方。</p>
+<p>右移动的原理也是相同的，右移 k 位就是当前数除以 2 的 k 次方。唯一不同的是分为<code>逻辑右移</code>和<code>算术右移</code>。</p>
+<p><code>逻辑右移</code>就是无符号移位，右移几位，就在左端补几个 0。</p>
+<p><code>算术右移</code>是有符号移位，和逻辑右移不同的是，算术右移是在左端补 k 个最高有效位的值，如此看着有些奇特，但对有符号整数数据的运算非常有用。我们知道有符号的数，首位字节，是用来表示数字的正负（1 为负）。负数采用补码形式来存储，比如 - 26（11100110），算术右移 1 位之后 - 13（11110011）。如若不是补最高有效位的值 1 而是补作 0 的话，右移之后就变成正数了。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">运算</th>
+<th style="text-align:center">例 1</th>
+<th style="text-align:center">例 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">x</td>
+<td style="text-align:center">01100011</td>
+<td style="text-align:center">10010101</td>
+</tr>
+<tr>
+<td style="text-align:center">x &lt;&lt; 4</td>
+<td style="text-align:center">00110000</td>
+<td style="text-align:center">01010000</td>
+</tr>
+<tr>
+<td style="text-align:center">x &gt;&gt; 4(逻辑右移)</td>
+<td style="text-align:center">00000110</td>
+<td style="text-align:center">00001001</td>
+</tr>
+<tr>
+<td style="text-align:center">x &gt;&gt; 4(算术右移)</td>
+<td style="text-align:center">00000110</td>
+<td style="text-align:center">11111001</td>
+</tr>
+</tbody>
+</table>
+<h3 id="经典应用"><a href="#经典应用" class="headerlink" title="经典应用"></a>经典应用</h3><h4 id="1-i-i-1"><a href="#1-i-i-1" class="headerlink" title="1. i+(~i)=-1"></a>1. i+(~i)=-1</h4><p>i 取反再与 i 相加，相当于把所有二进制位设为 1，其十进制结果为 - 1。</p>
+<h4 id="2-计算-n-1-与-n-1"><a href="#2-计算-n-1-与-n-1" class="headerlink" title="2. 计算 n+1 与 n-1"></a>2. 计算 n+1 与 n-1</h4><p><code>-~n == n + 1</code>，~n 为其取反，负号 ‘-‘ 再对其取反并加 1。</p>
+<p><code>~-n == n - 1</code>，思路就是找到最低位的第一个 1，对其取反并把该位后的所有位也取反，即01001000变为01000111。</p>
+<h4 id="3-取相反数"><a href="#3-取相反数" class="headerlink" title="3. 取相反数"></a>3. 取相反数</h4><p>思路就是取反并加 1，也即<code>~n + 1</code>或者<code>(n ^ -1) + 1</code>。</p>
+<h4 id="4-if-x-a-x-b-if-x-b-x-a"><a href="#4-if-x-a-x-b-if-x-b-x-a" class="headerlink" title="4. if(x == a) x = b; if(x == b) x = a;"></a>4. if(x == a) x = b; if(x == b) x = a;</h4><p>利用 ^ 运算符的性质，即得<code>x = a ^ b ^ x</code>。</p>
+<h4 id="5-求二进制中-1-的个数"><a href="#5-求二进制中-1-的个数" class="headerlink" title="5.求二进制中 1 的个数"></a>5.求二进制中 1 的个数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Version 1 */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">count_bits</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n ? (n &amp; <span class="number">1</span>) + count_bits(n &gt;&gt; <span class="number">1</span>) : <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="6-判断奇偶性"><a href="#6-判断奇偶性" class="headerlink" title="6.判断奇偶性"></a>6.判断奇偶性</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 判断是否是奇数 */</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">is_odd</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (n &amp; <span class="number">1</span> == <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="7-不用临时变量交换两个数"><a href="#7-不用临时变量交换两个数" class="headerlink" title="7.不用临时变量交换两个数"></a>7.不用临时变量交换两个数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 此方法对 a 和 b 相等的情况不适用 */</span></span><br><span class="line">a ^= b;  </span><br><span class="line">b ^= a;  <span class="comment">// 相当于 b = b ^ ( a ^ b );</span></span><br><span class="line">a ^= b;</span><br></pre></td></tr></table></figure>
+<h4 id="8-取绝对值"><a href="#8-取绝对值" class="headerlink" title="8.取绝对值"></a>8.取绝对值</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 注意：以下的数字 31 是针对 int 大小为 32 而言 */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">abs</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">return</span> (n ^ (n &gt;&gt; <span class="number">31</span>)) - (n &gt;&gt; <span class="number">31</span>);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中n &gt;&gt; 31取得 n 的正负号。</p>
+<ul>
+<li>若 n 为正数，n &gt;&gt; 31的所有位等于 0，其值等于 0。表达式转化为n ^ 0 - 0，等于 n；</li>
+<li>若 n 为负数，n &gt;&gt; 31的所有位等于 1，其值等于 - 1。表达式转化为(n ^ -1) + 1，这很好理解，负数的相反数就是对其补码取反再加 1，(n ^ -1) + 1就是在做这样的事。</li>
+</ul>
+
+  </div>
+</article>
+
+
+
+    </div>
+    
+      <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#相关基础"><span class="toc-number">1.</span> <span class="toc-text">相关基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-与运算"><span class="toc-number">1.1.</span> <span class="toc-text">1.与运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-或运算"><span class="toc-number">1.2.</span> <span class="toc-text">2.或运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-非运算"><span class="toc-number">1.3.</span> <span class="toc-text">3.非运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-异或运算"><span class="toc-number">1.4.</span> <span class="toc-text">4.异或运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-左移和右移"><span class="toc-number">1.5.</span> <span class="toc-text">5. 左移和右移</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#经典应用"><span class="toc-number">2.</span> <span class="toc-text">经典应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-i-i-1"><span class="toc-number">2.1.</span> <span class="toc-text">1. i+(~i)=-1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-计算-n-1-与-n-1"><span class="toc-number">2.2.</span> <span class="toc-text">2. 计算 n+1 与 n-1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-取相反数"><span class="toc-number">2.3.</span> <span class="toc-text">3. 取相反数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-if-x-a-x-b-if-x-b-x-a"><span class="toc-number">2.4.</span> <span class="toc-text">4. if(x == a) x = b; if(x == b) x = a;</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-求二进制中-1-的个数"><span class="toc-number">2.5.</span> <span class="toc-text">5.求二进制中 1 的个数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-判断奇偶性"><span class="toc-number">2.6.</span> <span class="toc-text">6.判断奇偶性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-不用临时变量交换两个数"><span class="toc-number">2.7.</span> <span class="toc-text">7.不用临时变量交换两个数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-取绝对值"><span class="toc-number">2.8.</span> <span class="toc-text">8.取绝对值</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://yoursite.com/2017/03/27/位运算总结/"><i class="fa fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://yoursite.com/2017/03/27/位运算总结/&text=位运算总结"><i class="fa fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://yoursite.com/2017/03/27/位运算总结/&is_video=false&description=位运算总结"><i class="fa fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=位运算总结&body=Check out this article: http://yoursite.com/2017/03/27/位运算总结/"><i class="fa fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://yoursite.com/2017/03/27/位运算总结/&title=位运算总结"><i class="fa fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://yoursite.com/2017/03/27/位运算总结/&name=位运算总结&description="><i class="fa fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      <ul>
+        <li id="toc"><a class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa fa-list fa-lg" aria-hidden="true"></i> TOC</a></li>
+        <li id="share"><a class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa fa-share-alt fa-lg" aria-hidden="true"></i> Share</a></li>
+        <li id="top" style="display:none"><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a></li>
+        <li id="menu"><a class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa fa-bars fa-lg" aria-hidden="true"></i> Menu</a></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+    
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2018 Yeason Chen
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="http://github.com/yeasonchen">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/meslo-LG/styles.css">
+<link rel="stylesheet" href="/lib/justified-gallery/justifiedGallery.min.css">
+
+<!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
